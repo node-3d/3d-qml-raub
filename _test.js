@@ -1,14 +1,13 @@
 'use strict';
 
-const node3d = require('node-3d-ready-raub');
-const qml    = require('node-qml-raub');
+const node3d = require('./index');
 
 const camera = new node3d.three.PerspectiveCamera( 75, node3d.canvas.width / node3d.canvas.height, 1, 1000 );
 camera.position.z = 500;
 
 const scene = new node3d.three.Scene();
 
-qml.init({
+node3d.qml.init({
 	three   : node3d.three,
 	document: node3d.doc,
 	canvas  : node3d.canvas,
@@ -18,7 +17,7 @@ qml.init({
 	overlay : true,
 });
 
-const ui = qml.used({file:'gui.qml'});
+const ui = node3d.qml.used({file:'gui.qml'});
 
 const geometry = new node3d.three.IcosahedronGeometry(200, 1);
 const material =  new node3d.three.MeshLambertMaterial({
