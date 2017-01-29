@@ -1,6 +1,6 @@
 {
   "name": "node-3d-qml-raub",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Use three.js 3D and QML 2D graphics together to build almighty apps with Node.js",
   "main": "index.js",
   "dependencies": {
