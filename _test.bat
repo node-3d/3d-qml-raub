@@ -1,3 +1,3 @@
-node --inspect _test
+node _test
 
 pause

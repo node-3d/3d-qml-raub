@@ -39,7 +39,7 @@ function animation() {
 	mesh.rotation.y = Date.now() * 0.0001;
 	
 	ui.update();
-	qml.release();
+	node3d.qml.release();
 	node3d.renderer.render(scene, camera);
 	
 }
