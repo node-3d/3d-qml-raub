@@ -1,30 +1,30 @@
 {
   "name": "node-3d-qml-raub",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Use three.js 3D and QML 2D graphics together to build almighty apps with Node.js",
   "main": "index.js",
   "dependencies": {
-    "node-3d-ready-raub": "^0.1.4",
-    "node-qml-raub": "^0.1.5"
+    "node-3d-ready-raub": "^0.1.7",
+    "node-qml-raub": "^0.1.7"
   },
   "keywords": [
     "3d",
     "qml",
-	"graphics",
-	"three",
-	"threejs"
+    "graphics",
+    "three",
+    "threejs"
   ],
-	"maintainers": [
-		{
-			"name": "Luis Blanco",
-			"email": "raubtierxxx@gmail.com",
-			"skype": "rauber666"
-		}
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/raub/node-3d-qml.git"
-	},
+  "maintainers": [
+    {
+      "name": "Luis Blanco",
+      "email": "raubtierxxx@gmail.com",
+      "skype": "rauber666"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raub/node-3d-qml.git"
+  },
   "author": "Luis Blanco <raubtierxxx@gmail.com> (https://github.com/raub)",
   "license": "MIT"
 }
