@@ -42,8 +42,8 @@ function animation() {
 	node3d.qml.release();
 	node3d.renderer.render(scene, camera);
 	
+	node3d.frame(animation);
+	
 }
 
-while (1){
-	node3d.frame(animation);
-}
+node3d.frame(animation);
