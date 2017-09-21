@@ -2,16 +2,16 @@ import QtQuick 2.7
 
 Rectangle {
 	
-	color: 'transparent'
+	color: 'cyan'
 	anchors.fill: parent
 	
 	Text {
 		
-		text: qsTr('Hello qml!')
+		text: qsTr('SECOND!')
 		
 		font.pixelSize: 14
 		font.bold: true
-		color: 'steelblue'
+		color: 'red'
 		
 		anchors.left: parent.left
 		anchors.leftMargin: 24
