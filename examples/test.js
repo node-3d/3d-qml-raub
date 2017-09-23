@@ -48,19 +48,11 @@ const points = new node3d.Points({
 
 
 
-const surface2 = new node3d.Rect({ screen, size: [400, 400], pos: [0,0] });
-
-const ui = new node3d.qml.View({ width: 400, height: 400, file: 'qml/first.qml' });
-surface2.texture = node3d.textureFromId(ui.textureId, screen.renderer);
-ui.on('reset', texId => surface2.texture = node3d.textureFromId(texId, screen.renderer));
-
-
-const surface3 = new node3d.Rect({ screen, size: [500, 500], pos: [-300,0] });
-
+const ui  = new node3d.qml.View({ width: 400, height: 400, file: 'qml/first.qml' });
 const ui2 = new node3d.qml.View({ width: 500, height: 500, file: 'qml/second.qml' });
-surface3.texture = node3d.textureFromId(ui2.textureId, screen.renderer);
-ui2.on('reset', texId => surface3.texture = node3d.textureFromId(texId, screen.renderer));
 
+const surface2 = new node3d.QmlRect({ screen, size: [400, 400], pos: [0,0], view: ui2 });
+const surface3 = new node3d.QmlRect({ screen, size: [500, 500], pos: [-300,-300], view: ui2 });
 
 
 
@@ -87,16 +79,16 @@ document.on('mousemove', e => {
 	points.mesh.rotation.x += dy * 0.001;
 	
 	surface.pos = surface.pos.plused([-dx, dy]);
-	surface2.pos = surface2.pos.plused([dx, -dy]);
-	surface3.pos = surface2.pos.plused([dx, -dy]);
+	// surface2.pos = surface2.pos.plused([dx, -dy]);
+	// surface3.pos = surface2.pos.plused([dx, -dy]);
 	
 });
 
 
 function animation() {
 	
-	ui.update();
-	ui2.update();
+	// ui.update();
+	// ui2.update();
 	node3d.qml.release();
 	
 	screen.draw();
