@@ -49,10 +49,10 @@ const points = new node3d.Points({
 
 
 const ui  = new node3d.qml.View({ width: 400, height: 400, file: 'qml/first.qml' });
-const ui2 = new node3d.qml.View({ width: 500, height: 500, file: 'qml/second.qml' });
+const surface2 = new node3d.QmlRect({ screen, size: [400, 400], pos: [-100,100], view: ui });
 
-const surface2 = new node3d.QmlRect({ screen, size: [400, 400], pos: [0,0], view: ui2 });
-const surface3 = new node3d.QmlRect({ screen, size: [500, 500], pos: [-300,-300], view: ui2 });
+const ui2 = new node3d.qml.View({ width: 500, height: 500, file: 'qml/second.qml' });
+const surface3 = new node3d.QmlRect({ screen, size: [500, 500], pos: [100,-100], view: ui2 });
 
 
 
@@ -79,8 +79,8 @@ document.on('mousemove', e => {
 	points.mesh.rotation.x += dy * 0.001;
 	
 	surface.pos = surface.pos.plused([-dx, dy]);
-	// surface2.pos = surface2.pos.plused([dx, -dy]);
-	// surface3.pos = surface2.pos.plused([dx, -dy]);
+	surface2.pos = surface2.pos.plused([dx, -dy]);
+	surface3.pos = surface3.pos.plused([dx, dy]);
 	
 });
 
