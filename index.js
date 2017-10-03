@@ -7,6 +7,9 @@ const qml    = require('node-qml-raub');
 node3d.QmlMaterial = require('./qml-material');
 node3d.QmlRect     = require('./qml-rect');
 
+node3d.QmlOverlayMaterial = require('./qml-overlay-material');
+node3d.QmlOverlay         = require('./qml-overlay');
+
 
 const _cc = glfw.GetCurrentContext();
 const wnd = glfw.Win32Window(_cc);

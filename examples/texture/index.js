@@ -1,6 +1,6 @@
 'use strict';
 
-const node3d  = require('../index');
+const node3d  = require('../../index');
 
 
 const VBO_SIZE = 10000;
