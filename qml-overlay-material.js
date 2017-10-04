@@ -21,7 +21,7 @@ class QmlOverlayMaterial extends node3d.three.ShaderMaterial {
 				varying vec2 tc;
 				void main() {
 					tc = uv;
-					gl_Position = vec4(position, 1.0);
+					gl_Position = vec4(position - vec3(1.0, 1.0, 0.0), 1.0);
 				}
 			`,
 			

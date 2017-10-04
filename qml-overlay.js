@@ -8,8 +8,7 @@ class QmlOverlay extends QmlRect {
 	
 	constructor(opts) {
 		
-		opts.size = [2, 2]
-		opts.pos = [-1, -1]
+		opts.size = [2, 2];
 		
 		super(opts);
 		
