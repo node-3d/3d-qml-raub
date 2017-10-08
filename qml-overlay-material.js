@@ -38,8 +38,8 @@ class QmlOverlayMaterial extends node3d.three.ShaderMaterial {
 		
 	}
 	
-	get texture() { return this._mesh.material.uniforms.t.value; }
-	set texture(tex) { this._mesh.material.uniforms.t.value = tex; }
+	get texture() { return this.uniforms.t.value; }
+	set texture(tex) { this.uniforms.t.value = tex; }
 	
 }
 
