@@ -4,7 +4,7 @@
   "description": "Empowers Node.js with 3D (WebGL) and 2D (QML) graphics",
   "main": "index.js",
   "dependencies": {
-    "node-3d-ready-raub": "0.2.7",
+    "node-3d-ready-raub": "0.2.8",
     "node-qml-raub": "0.2.6"
   },
   "keywords": [

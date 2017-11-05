@@ -12,6 +12,8 @@ class QmlOverlay extends QmlRect {
 		
 		super(opts);
 		
+		node3d.qml.release();
+		
 	}
 	
 	

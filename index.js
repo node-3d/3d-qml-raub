@@ -22,4 +22,20 @@ qml.release();
 
 node3d.qml = qml;
 
+
+node3d.loop = screen => {
+	
+	const animation = () => {
+		
+		node3d.qml.release();
+		screen.draw();
+		node3d.frame(animation);
+		
+	};
+	
+	node3d.frame(animation);
+	
+};
+
+
 module.exports = node3d;
