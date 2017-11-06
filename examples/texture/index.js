@@ -56,6 +56,7 @@ const surface3 = new node3d.QmlRect({ screen, size: [500, 500], pos: [100,-100],
 
 
 
+
 let isMoving = false;
 let isRotating = false;
 let mouse = { x: 0, y: 0 };
@@ -85,15 +86,4 @@ document.on('mousemove', e => {
 });
 
 
-function animation() {
-	
-	// ui.update();
-	// ui2.update();
-	node3d.qml.release();
-	
-	screen.draw();
-	node3d.frame(animation);
-	
-}
-
-node3d.frame(animation);
+node3d.loop(screen);
