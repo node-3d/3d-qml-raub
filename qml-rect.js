@@ -21,10 +21,14 @@ class QmlRect extends node3d.Rect {
 		this._textureId = this._view.textureId;
 		
 		this._view.on('reset', texId => {
+			
+			node3d.qml.release();
+			
 			this._textureId = texId;
 			this._mesh.material.texture = this._textureId !== undefined ?
 				node3d.textureFromId(this._textureId, opts.screen.renderer) :
 				null;
+			
 		});
 		
 	}

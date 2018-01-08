@@ -47,14 +47,11 @@ const points = new node3d.Points({
 });
 
 
-
 const ui  = new node3d.qml.View({ width: 400, height: 400, file: 'qml/first.qml' });
 const surface2 = new node3d.QmlRect({ screen, size: [400, 400], pos: [-100,100], view: ui });
 
 const ui2 = new node3d.qml.View({ width: 500, height: 500, file: 'qml/second.qml' });
 const surface3 = new node3d.QmlRect({ screen, size: [500, 500], pos: [100,-100], view: ui2 });
-
-
 
 
 let isMoving = false;

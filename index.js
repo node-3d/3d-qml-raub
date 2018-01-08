@@ -12,8 +12,8 @@ node3d.QmlOverlay         = require('./qml-overlay');
 
 
 const _cc = glfw.GetCurrentContext();
-const wnd = glfw.Win32Window(_cc);
-const ctx = glfw.Win32Context(_cc);
+const wnd = glfw.PlatformWindow(_cc);
+const ctx = glfw.PlatformContext(_cc);
 
 qml.release = () => glfw.MakeContextCurrent(_cc);
 
