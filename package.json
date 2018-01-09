@@ -1,7 +1,7 @@
 {
   "name": "node-3d-qml-raub",
   "author": "Luis Blanco <raubtierxxx@gmail.com> (https://github.com/raub)",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Empowers Node.js with 3D (WebGL) and 2D (QML) graphics",
   "main": "index.js",
   "keywords": [
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "node-3d-ready-raub": "0.3.1",
+    "node-glfw-raub": "0.6.2",
     "node-qml-raub": "0.3.3"
   },
   "license": "MIT"
