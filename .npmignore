@@ -1,12 +1,10 @@
 .idea
-.cproject,.project
-.cproject
 .project
+.cproject
 .lock-wscript
-build*
 .DS_Store
 Debug
 node_modules
-bin_*
 *.log
 *.qmlc
+examples

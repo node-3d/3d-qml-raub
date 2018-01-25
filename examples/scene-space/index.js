@@ -1,13 +1,21 @@
 'use strict';
 
-const node3d  = require('../../index');
+const core3d = require('3d-core-raub');
+const qml3d = require('3d-qml-raub');
+
+qml3d(core3d);
+
+
+const { qml, Screen, three, loop, Surface, gl, Points } = core3d;
+const { View, Overlay, Rect } = qml;
 
 
 const VBO_SIZE = 10000;
 
-const screen = new node3d.Screen();
+const screen = new Screen();
+loop(() => screen.draw());
 
-const surface = new node3d.Surface({ screen });
+const surface = new Surface({ screen });
 
 const vertices = [];
 const colors = [];
@@ -16,15 +24,15 @@ for (let i = VBO_SIZE * 3; i > 0; i--) {
 	colors.push( Math.random() );
 }
 
-const pos = node3d.gl.createBuffer();
-node3d.gl.bindBuffer(node3d.gl.ARRAY_BUFFER, pos);
-node3d.gl.bufferData(node3d.gl.ARRAY_BUFFER, new Float32Array(vertices), node3d.gl.STATIC_DRAW);
+const pos = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, pos);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-const rgb = node3d.gl.createBuffer();
-node3d.gl.bindBuffer(node3d.gl.ARRAY_BUFFER, rgb);
-node3d.gl.bufferData(node3d.gl.ARRAY_BUFFER, new Float32Array(colors), node3d.gl.STATIC_DRAW);
+const rgb = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, rgb);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-const points = new node3d.Points({
+const points = new Points({
 	
 	screen: surface,
 	
@@ -47,11 +55,11 @@ const points = new node3d.Points({
 });
 
 
-const ui  = new node3d.qml.View({ width: 400, height: 400, file: 'qml/first.qml' });
-const surface2 = new node3d.QmlRect({ screen, size: [400, 400], pos: [-100,100], view: ui });
+const ui  = new View({ width: 400, height: 400, file: 'qml/first.qml' });
+const surface2 = new Rect({ screen, size: [400, 400], pos: [-100,100], view: ui });
 
-const ui2 = new node3d.qml.View({ width: 500, height: 500, file: 'qml/second.qml' });
-const surface3 = new node3d.QmlRect({ screen, size: [500, 500], pos: [100,-100], view: ui2 });
+const ui2 = new View({ width: 500, height: 500, file: 'qml/second.qml' });
+const surface3 = new Rect({ screen, size: [500, 500], pos: [100,-100], view: ui2 });
 
 
 let isMoving = false;
@@ -81,6 +89,3 @@ document.on('mousemove', e => {
 	surface3.pos = surface3.pos.plused([dx, dy]);
 	
 });
-
-
-node3d.loop(screen);
