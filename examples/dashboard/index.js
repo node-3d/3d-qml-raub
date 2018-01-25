@@ -17,6 +17,3 @@ loop(() => screen.draw());
 const ui = new View({ width: screen.w, height: screen.h, file: 'qml/dashboard.qml' });
 
 new Overlay({ screen, view: ui });
-
-
-loop(screen);

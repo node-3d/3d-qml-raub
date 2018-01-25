@@ -9,27 +9,28 @@ module.exports = core => {
 	
 	const { glfw, loop } = core;
 	
-	const _cc = glfw.GetCurrentContext();
-	const wnd = glfw.PlatformWindow(_cc);
-	const ctx = glfw.PlatformContext(_cc);
+	const _cc = glfw.getCurrentContext();
+	const wnd = glfw.platformWindow(_cc);
+	const ctx = glfw.platformContext(_cc);
 	
-	const release = () => glfw.MakeContextCurrent(_cc);
+	const release = () => glfw.makeContextCurrent(_cc);
 	
 	qml.init(wnd, ctx);
 	release();
 	
+	core.loop = cb => loop(() => {
+		release();
+		cb();
+	});
 	
 	Object.assign(core.qml, {
 		
 		context : qml,
 		
+		release,
+		
 		View,
 		Variable,
-		
-		loop : cb => loop(() => {
-			release();
-			cb();
-		}),
 		
 	});
 	
