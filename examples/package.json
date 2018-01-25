@@ -25,6 +25,6 @@
   },
   "dependencies": {
     "3d-core-raub": "0.0.2",
-    "3d-qml-raub": "0.0.1"
+    "3d-qml-raub": "0.0.2"
   }
 }
