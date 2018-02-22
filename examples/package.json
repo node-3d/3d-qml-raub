@@ -4,6 +4,9 @@
   "description": "EXAMPLES",
   "version": "0.0.1",
   "main": "scene-space/index",
+  "scripts": {
+    "preinstall": "cd .. && npm i"
+  },
   "keywords": [
     "qml",
     "opengl",
@@ -25,6 +28,6 @@
   },
   "dependencies": {
     "3d-core-raub": "0.0.2",
-    "3d-qml-raub": "0.0.2"
+    "3d-qml-raub": "../"
   }
 }
