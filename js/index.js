@@ -1,21 +1,17 @@
 'use strict';
 
-const qml = require('node-qml-raub');
+const qml = require('qml-raub');
 
 const { View, Variable } = qml;
 
 
 module.exports = core => {
 	
-	const { glfw, loop } = core;
+	const { glfw, loop, doc } = core;
 	
-	const _cc = glfw.getCurrentContext();
-	const wnd = glfw.platformWindow(_cc);
-	const ctx = glfw.platformContext(_cc);
+	const release = () => doc.makeCurrent();
 	
-	const release = () => glfw.makeContextCurrent(_cc);
-	
-	qml.init(wnd, ctx);
+	qml.View.init(process.cwd(), doc.platformWindow, doc.platformContext);
 	release();
 	
 	core.loop = cb => loop(() => {
