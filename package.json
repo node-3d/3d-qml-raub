@@ -23,7 +23,7 @@
     "url": "https://github.com/raub/node-3d-qml.git"
   },
   "dependencies": {
-    "qml-raub": "https://github.com/raub/node-qml.git"
+    "qml-raub": "0.0.1"
   },
   "license": "MIT"
 }
