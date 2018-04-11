@@ -2,7 +2,7 @@
 
 const qml = require('qml-raub');
 
-const { View, Variable } = qml;
+const { View, Property, Method } = qml;
 
 
 module.exports = core => {
@@ -26,7 +26,8 @@ module.exports = core => {
 		release,
 		
 		View,
-		Variable,
+		Property,
+		Method,
 		
 	});
 	

@@ -9,8 +9,7 @@ module.exports = core => {
 	require('./rect')(core);
 	require('./overlay-material')(core);
 	
-	const { three, qml } = core;
-	const { Texture } = three;
+	const { qml } = core;
 	const { release, Rect, OverlayMaterial } = qml;
 	
 	class Overlay extends Rect {
@@ -20,6 +19,8 @@ module.exports = core => {
 			opts.size = [2, 2];
 			
 			super(opts);
+			
+			opts.screen.on('resize', ({w, h}) => opts.view.wh = [w, h]);
 			
 			release();
 			
