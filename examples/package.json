@@ -27,7 +27,7 @@
     "url": "https://github.com/raub/node-3d-qml.git"
   },
   "dependencies": {
-    "3d-core-raub": "0.0.7",
+    "3d-core-raub": "0.0.8",
     "3d-qml-raub": "../"
   }
 }

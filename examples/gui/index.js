@@ -17,11 +17,11 @@ const F_KEY = 70;
 
 doc.on('keydown', e => {
 	if (e.keyCode === F_KEY && e.ctrlKey && e.shiftKey) {
-		this.mode = 'windowed';
+		doc.mode = 'windowed';
 	} else if (e.keyCode === F_KEY && e.ctrlKey && e.altKey) {
-		this.mode = 'fullscreen';
+		doc.mode = 'fullscreen';
 	} else if (e.keyCode === F_KEY && e.ctrlKey) {
-		this.mode = 'borderless';
+		doc.mode = 'borderless';
 	}
 });
 
@@ -67,16 +67,23 @@ const points = new Points({
 
 
 const ui = new View({ width: screen.w, height: screen.h, file: `${__dirname}/qml/gui.qml` });
+
+doc.on('mousedown', ui.mousedown.bind(ui));
+doc.on('mouseup', ui.mouseup.bind(ui));
+doc.on('mousemove', ui.mousemove.bind(ui));
+doc.on('keydown', ui.keydown.bind(ui));
+doc.on('keyup', ui.keyup.bind(ui));
+
 new Overlay({ screen, view: ui });
 
 
 let isRotating = false;
 let mouse = { x: 0, y: 0 };
 
-doc.on('mousedown', () => isRotating = true);
-doc.on('mouseup', () => isRotating = false);
+ui.on('mousedown', () => isRotating = true);
+ui.on('mouseup', () => isRotating = false);
 
-doc.on('mousemove', e => {
+ui.on('mousemove', e => {
 	
 	const dx = mouse.x - e.x;
 	const dy = mouse.y - e.y;

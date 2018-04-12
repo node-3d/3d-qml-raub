@@ -47,7 +47,6 @@ module.exports = core => {
 		
 		get texture() { return this.uniforms.t.value; }
 		set texture(tex) {
-			console.log('overlay-material.js', 'SETTE', tex);
 			this.uniforms.t.value = tex;
 			this.uniforms.t.needsUpdate = true;
 		}

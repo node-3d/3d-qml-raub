@@ -7,7 +7,7 @@ const { View, Property, Method } = qml;
 
 module.exports = core => {
 	
-	const { glfw, loop, doc } = core;
+	const { loop, doc } = core;
 	
 	const release = () => doc.makeCurrent();
 	

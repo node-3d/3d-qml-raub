@@ -5,13 +5,11 @@ Rectangle {
 	color: 'transparent'
 	anchors.fill: parent
 	
-	Text {
+	Button {
 		
-		text: qsTr('FIRST!')
+		text: qsTr('Hello world!')
 		
-		font.pixelSize: 14
-		font.bold: true
-		color: 'steelblue'
+		onClicked: { console.log('suka') }
 		
 		anchors.left: parent.left
 		anchors.leftMargin: 24

@@ -30,7 +30,7 @@ module.exports = core => {
 			this._view.on('reset', texId => {
 				
 				release();
-				console.log('rect.js', 'SETTEX', texId);
+				
 				this._textureId = texId;
 				this._mesh.material.texture = this._textureId !== undefined ?
 					Texture.fromId(this._textureId, opts.screen.renderer) :
