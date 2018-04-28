@@ -1,33 +1,13 @@
 {
-  "name": "EXAMPLES",
-  "author": "Luis Blanco <raubtierxxx@gmail.com>",
-  "description": "EXAMPLES",
-  "version": "0.0.1",
-  "main": "scene-space/index",
-  "scripts": {
-    "preinstall": "cd .. && npm i"
-  },
-  "keywords": [
-    "qml",
-    "opengl",
-    "3d",
-    "graphics",
-    "2d"
-  ],
-  "maintainers": [
-    {
-      "name": "Luis Blanco",
-      "email": "raubtierxxx@gmail.com",
-      "skype": "rauber666"
-    }
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/raub/node-3d-qml.git"
-  },
-  "dependencies": {
-    "3d-core-raub": "0.0.8",
-    "3d-qml-raub": "../"
-  }
+	"name": "example",
+	"version": "0.0.0",
+	"private": true,
+	"main": "scene-space/index",
+	"scripts": {
+		"preinstall": "cd .. && npm i"
+	},
+	"dependencies": {
+		"3d-qml-raub": "file:../",
+		"3d-core-raub": "0.0.8"
+	}
 }

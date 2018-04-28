@@ -1,29 +1,33 @@
 {
-  "name": "3d-qml-raub",
-  "author": "Luis Blanco <raubtierxxx@gmail.com>",
-  "version": "0.0.2",
-  "description": "QML 2D graphics plugin for Node.js 3D Core",
-  "main": "index.js",
-  "keywords": [
-    "3d",
-    "qml",
-    "graphics",
-    "three",
-    "threejs"
-  ],
-  "maintainers": [
-    {
-      "name": "Luis Blanco",
-      "email": "raubtierxxx@gmail.com",
-      "skype": "rauber666"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/raub/node-3d-qml.git"
-  },
-  "dependencies": {
-    "qml-raub": "0.0.1"
-  },
-  "license": "MIT"
+	"author": "Luis Blanco <luisblanco1337@gmail.com>",
+	"name": "3d-qml-raub",
+	"version": "0.0.3",
+	"description": "QML 2D graphics plugin for Node.js 3D Core",
+	"license": "MIT",
+	"main": "index.js",
+	"keywords": [,
+		"plugin"
+		"3d",
+		"node3d",
+		"qml",
+		"graphics"
+	],
+	"engines": {
+		"node": ">=8.11.1",
+		"npm": ">=5.6.0"
+	},
+	"maintainers": [
+		{
+			"name": "Luis Blanco",
+			"email": "luisblanco1337@gmail.com",
+			"skype": "rauber666"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/node-3d/3d-qml-raub.git"
+	},
+	"dependencies": {
+		"qml-raub": "0.0.2"
+	}
 }
