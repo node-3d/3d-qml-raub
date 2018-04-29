@@ -5,8 +5,8 @@
 	"description": "QML 2D graphics plugin for Node.js 3D Core",
 	"license": "MIT",
 	"main": "index.js",
-	"keywords": [,
-		"plugin"
+	"keywords": [
+		"plugin",
 		"3d",
 		"node3d",
 		"qml",
