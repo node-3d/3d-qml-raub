@@ -20,7 +20,7 @@ module.exports = core => {
 			
 			super(opts);
 			
-			opts.screen.on('resize', ({w, h}) => opts.view.wh = [w, h]);
+			opts.screen.on('resize', ({width, height}) => opts.view.wh = [width, height]);
 			
 			release();
 			
