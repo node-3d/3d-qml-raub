@@ -20,6 +20,8 @@ module.exports = core => {
 			
 			super(opts);
 			
+			this._mesh.frustumCulled = false;
+			
 			opts.screen.on('resize', ({width, height}) => opts.view.wh = [width, height]);
 			
 			release();
