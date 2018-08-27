@@ -38,8 +38,8 @@ Rectangle {
 		
 		boundsBehavior: Flickable.StopAtBounds
 		
-		delegate: Subtree {}
-		model   : ListModel {}
+		delegate: TreeItem {}
+		model   : ListModel { dynamicRoles: true }
 		
 		Component {
 			

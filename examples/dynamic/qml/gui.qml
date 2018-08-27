@@ -26,11 +26,6 @@ Column {
 			onClicked: cb.call('tree-switch')
 		}
 		
-		Button {
-			text: 'Clear'
-			onClicked: cb.call('tree-clear')
-		}
-		
 	}
 	
 	

@@ -11,7 +11,7 @@ Row {
 		source  : 'tri.png'
 		width   : 16
 		height  : 16
-		visible : subtree && subtree.length ? true : false
+		visible : model.subtree ? model.subtree.count > 0 : false
 		
 		transform : Rotation { origin.x: 8; origin.y: 8; angle: isOpen ? 90 : 0 }
 		
@@ -25,7 +25,7 @@ Row {
 		
 		Text {
 			
-			text : title
+			text : model.title
 			
 			color : 'red'
 			
@@ -33,10 +33,17 @@ Row {
 			font.family    : 'Courier New'
 			font.pixelSize : 16
 			
+			MouseArea {
+				anchors.fill : parent
+				onClicked    : cb.call('tree-clicked', { title: model.title })
+			}
+			
 		}
 		
+		
+		
 		Loader {
-			source: isOpen && subtree && subtree.length ? 'Subtree.qml' : 'Empty.qml'
+			source: (isOpen && model.subtree && model.subtree.count) ? 'TreeList.qml' : 'TreeEmpty.qml'
 		}
 		
 	}

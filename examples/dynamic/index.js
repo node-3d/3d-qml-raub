@@ -38,8 +38,10 @@ doc.on('keyup', ui.keyup.bind(ui));
 
 new Overlay({ screen, view: ui });
 
-// KINJUTSU: Dynamic QML Tree
 
+// ----------- KINJUTSU: Dynamic QML Tree
+
+// Tree presets
 const tree1 = [
 	{ title: 'line1' },
 	{
@@ -51,6 +53,7 @@ const tree1 = [
 	},
 	{ title: 'line3' },
 ];
+
 const tree2 = [
 	{ title: 'line1' },
 	{ title: 'line2' },
@@ -61,6 +64,7 @@ const tree2 = [
 		],
 	},
 ];
+
 let activeTree = tree1;
 
 const randomize = tree => {
@@ -80,12 +84,8 @@ ui.on('tree-randomize', e => {
 });
 
 ui.on('tree-switch', e => {
-	activeTree = activeTree === tree1 && tree2 || tree1;
+	activeTree = (activeTree === tree1) ? tree2 : tree1;
 	updateTree.call(activeTree);
-});
-
-ui.on('tree-clear', e => {
-	clearTree.call(activeTree);
 });
 
 updateTree.call(activeTree);
