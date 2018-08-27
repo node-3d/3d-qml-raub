@@ -8,6 +8,6 @@
 	},
 	"dependencies": {
 		"3d-qml-raub": "file:../",
-		"3d-core-raub": "0.0.8"
+		"3d-core-raub": "https://github.com/node-3d/3d-core-raub.git"
 	}
 }

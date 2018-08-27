@@ -9,7 +9,7 @@ Rectangle {
 		
 		text: qsTr('Hello world!')
 		
-		onClicked: { console.log('suka') }
+		onClicked: { console.log('o hai') }
 		
 		anchors.left: parent.left
 		anchors.leftMargin: 24
