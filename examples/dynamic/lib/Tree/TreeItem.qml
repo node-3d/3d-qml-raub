@@ -7,11 +7,14 @@ Row {
 	
 	property bool isOpen: true
 	
+	property var list: model.subtree
+	property string title: model.title
+	
 	Image {
 		source  : 'tri.png'
 		width   : 16
 		height  : 16
-		visible : model.subtree ? model.subtree.count > 0 : false
+		visible : list ? list.count > 0 : false
 		
 		transform : Rotation { origin.x: 8; origin.y: 8; angle: isOpen ? 90 : 0 }
 		
@@ -25,7 +28,7 @@ Row {
 		
 		Text {
 			
-			text : model.title
+			text : title
 			
 			color : 'red'
 			
@@ -35,15 +38,14 @@ Row {
 			
 			MouseArea {
 				anchors.fill : parent
-				onClicked    : cb.call('tree-clicked', { title: model.title })
+				onClicked    : cb.call('tree-clicked', { title: title })
 			}
 			
 		}
 		
 		
-		
 		Loader {
-			source: (isOpen && model.subtree && model.subtree.count) ? 'TreeList.qml' : 'TreeEmpty.qml'
+			source: list && list.count ? 'TreeList.qml' : 'TreeEmpty.qml'
 		}
 		
 	}

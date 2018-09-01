@@ -8,18 +8,14 @@ Rectangle {
 	property var tree: []
 	
 	function update(data) {
-		
 		treeView.model.clear();
 		data.forEach(function (node) {
 			treeView.model.append(node);
 		});
-		
 	}
 	
 	function clear(data) {
-		
 		treeView.model.clear();
-		
 	}
 	
 	width: 200
@@ -39,7 +35,7 @@ Rectangle {
 		boundsBehavior: Flickable.StopAtBounds
 		
 		delegate: TreeItem {}
-		model   : ListModel { dynamicRoles: true }
+		model   : ListModel {}
 		
 		Component {
 			
