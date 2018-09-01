@@ -21,6 +21,7 @@ module.exports = core => {
 			super(opts);
 			
 			this._mesh.frustumCulled = false;
+			this._mesh.renderOrder = Infinity;
 			
 			opts.screen.on('resize', ({width, height}) => opts.view.wh = [width, height]);
 			
