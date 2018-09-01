@@ -6,7 +6,7 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, three, loop, Surface, gl, Points } = core3d;
+const { qml, Screen, three, loop, Surface, gl, Points, doc } = core3d;
 const { View, Overlay, Rect } = qml;
 
 
@@ -14,6 +14,20 @@ const VBO_SIZE = 10000;
 
 const screen = new Screen();
 loop(() => screen.draw());
+
+
+const F_KEY = 70;
+
+doc.on('keydown', e => {
+	if (e.keyCode === F_KEY && e.ctrlKey && e.shiftKey) {
+		screen.mode = 'windowed';
+	} else if (e.keyCode === F_KEY && e.ctrlKey && e.altKey) {
+		screen.mode = 'fullscreen';
+	} else if (e.keyCode === F_KEY && e.ctrlKey) {
+		screen.mode = 'borderless';
+	}
+});
+
 
 const surface = new Surface({ screen });
 

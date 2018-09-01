@@ -17,11 +17,11 @@ const F_KEY = 70;
 
 doc.on('keydown', e => {
 	if (e.keyCode === F_KEY && e.ctrlKey && e.shiftKey) {
-		doc.mode = 'windowed';
+		screen.mode = 'windowed';
 	} else if (e.keyCode === F_KEY && e.ctrlKey && e.altKey) {
-		doc.mode = 'fullscreen';
+		screen.mode = 'fullscreen';
 	} else if (e.keyCode === F_KEY && e.ctrlKey) {
-		doc.mode = 'borderless';
+		screen.mode = 'borderless';
 	}
 });
 
