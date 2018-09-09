@@ -9,7 +9,7 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, loop, gl, Points, doc, three } = core3d;
+const { qml, Screen, gl, Points, doc, three } = core3d;
 const {
 	View,
 	Rect, Material,
@@ -17,8 +17,13 @@ const {
 	context, release,
 } = qml;
 
+const loop = (cb) => {
+	const timer = setInterval(cb, 16);
+	return () => clearInterval(timer);
+};
+
 const screen = new Screen();
-loop(() => screen.draw());
+
 
 const ui = new View({ width: screen.w, height: screen.h, file: `${__dirname}/test.qml` });
 
@@ -59,7 +64,13 @@ const classes = {
 };
 
 
-describe('Node.js 3D QML', () => {
+describe('Node.js 3D QML', function () {
+	
+	let l;
+	before(() => { l = loop(() => screen.draw()); });
+	after(() => { l(); l = null; });
+	
+	this.timeout(10000);
 	
 	it('exports an function', () => {
 		expect(qml3d).to.be.a('function');
