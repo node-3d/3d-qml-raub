@@ -9,7 +9,7 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, loop, gl, Points, doc } = core3d;
+const { qml, Screen, loop, gl, Points, doc, three } = core3d;
 const {
 	View,
 	Rect, Material,
@@ -28,15 +28,7 @@ const classes = {
 		create() {
 			return new Rect({ screen, view: ui })
 		},
-		props: ['size', 'pos', 'visible'],
-		methods: [],
-	},
-	
-	Material: {
-		create() {
-			return new Material({ screen, view: ui });
-		},
-		props: ['size', 'pos', 'visible'],
+		props: ['textureId'],
 		methods: [],
 	},
 	
@@ -44,15 +36,23 @@ const classes = {
 		create() {
 			return new Overlay({ screen, view: ui });
 		},
-		props: ['size', 'pos', 'visible'],
+		props: ['textureId'],
+		methods: [],
+	},
+	
+	Material: {
+		create() {
+			return new Material({ screen, view: ui, texture: new three.Texture() });
+		},
+		props: ['texture'],
 		methods: [],
 	},
 	
 	OverlayMaterial: {
 		create() {
-			return new OverlayMaterial({ screen, view: ui });
+			return new OverlayMaterial({ screen, view: ui, texture: new three.Texture() });
 		},
-		props: ['size', 'pos', 'visible'],
+		props: ['texture'],
 		methods: [],
 	},
 	
@@ -61,15 +61,22 @@ const classes = {
 
 describe('Node.js 3D QML', () => {
 	
-	it('exports an object', () => {
-		expect(qml3d).to.be.an('object');
+	it('exports an function', () => {
+		expect(qml3d).to.be.a('function');
 	});
 	
+	it('extends the core', () => {
+		expect(core3d).to.have.property('qml');
+	});
+	
+	it('is an object', () => {
+		expect(qml).to.be.an('object');
+	});
 	
 	Object.keys(classes).forEach(
 		c => {
 			it(`${c} is exported`, () => {
-				expect(node3d).to.respondTo(c);
+				expect(qml).to.respondTo(c);
 			});
 		}
 	);
@@ -80,7 +87,7 @@ describe('Node.js 3D QML', () => {
 		const instance = current.create();
 		
 		it('can be created', () => {
-			expect(instance).to.be.an.instanceOf(node3d[c]);
+			expect(instance).to.be.an.instanceOf(qml[c]);
 		});
 		
 		
