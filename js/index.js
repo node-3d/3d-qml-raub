@@ -15,7 +15,7 @@ module.exports = core => {
 	release();
 	
 	core.loop = cb => loop(() => {
-        View.update();
+		View.update();
 		release();
 		cb();
 	});

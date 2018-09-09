@@ -1,0 +1,17 @@
+{
+	"name": "test",
+	"version": "0.0.0",
+	"private": true,
+	"main": "mocha",
+	"scripts": {
+		"test": "mocha",
+		"start": "mocha",
+		"preinstall": "cd .. && npm i"
+	},
+	"dependencies": {
+		"3d-core-raub": "file:../",
+		"chai": "^4.1.2",
+		"mocha": "^5.0.0",
+		"sinon": "^4.2.2"
+	}
+}
