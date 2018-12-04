@@ -3,11 +3,8 @@
 	"version": "0.0.0",
 	"private": true,
 	"main": "scene-space/index",
-	"scripts": {
-		"preinstall": "cd .. && npm i"
-	},
 	"dependencies": {
-		"3d-qml-raub": "file:../",
+		"3d-qml-raub": "https://github.com/node-3d/3d-qml-raub.git",
 		"3d-core-raub": "https://github.com/node-3d/3d-core-raub.git"
 	}
 }
