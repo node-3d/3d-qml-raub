@@ -99,3 +99,9 @@ ui.on('mousemove', e => {
 	points.mesh.rotation.x += dy * 0.001;
 	
 });
+
+
+ui.on('ohai', data => {
+	console.log('RECV', data);
+	ui.set('myButton1', 'text', `${Date.now()}`);
+});
