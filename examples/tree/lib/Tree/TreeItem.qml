@@ -5,10 +5,28 @@ Row {
 	
 	padding: 1
 	
-	property bool isOpen: true
-	
+	property string kind: model.kind
+	property string value: model.value
+	property bool isOpen: model.isOpen
 	property var list: model.subtree
 	property string title: model.title
+	
+	Component.onCompleted: treeRoot.ioReg({
+		uid   : uid,
+		setter: function (v) { value = v;    },
+		getter: function ()  { return value; },
+	})
+	Component.onDestruction: treeRoot.ioDrop({
+		uid  : uid,
+		value: value,
+	})
+	
+	onValueChanged: cb.call('get', {
+		name: uid,
+		key: 'value',
+		value: value,
+	});
+	
 	
 	Image {
 		source  : 'tri.png'
@@ -38,14 +56,20 @@ Row {
 			
 			MouseArea {
 				anchors.fill : parent
-				onClicked    : cb.call('tree-clicked', { title: title })
+				onClicked    : cb.call('tree-clicked', { title: title, uid: uid })
 			}
 			
 		}
 		
+		TextInput {
+			color: 'white'
+			visible: kind === 'value'
+			text: value
+		}
+		
 		
 		Loader {
-			source: list && list.count ? 'TreeList.qml' : 'TreeEmpty.qml'
+			source: 'TreeList.qml'
 		}
 		
 	}

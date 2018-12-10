@@ -1,5 +1,8 @@
 import QtQuick 2.7
 
+import "item-utils.js" as ItemUtils
+import "io-man.js" as IoMan
+
 
 Rectangle {
 	
@@ -18,10 +21,18 @@ Rectangle {
 		treeView.model.clear();
 	}
 	
-	width: 200
-	height: treeView.contentHeight + 30
 	
-	color: "transparent"
+	property var ioMan: new IoMan.IoMan()
+	function ioDrop( opts ) { ioMan.drop( opts ); }
+	function ioReg(  opts ) { ioMan.reg(  opts ); }
+	function ioSet(  opts ) { ioMan.set(  opts ); }
+	function ioGet(  opts ) { ioMan.get(  opts ); }
+	
+	
+	width  : 200
+	height : treeView.contentHeight + 30
+	
+	color  : "transparent"
 	
 	ListView {
 		
@@ -52,6 +63,14 @@ Rectangle {
 		}
 		
 		header: headerComponent
+		
+		
+		Connections {
+			target: treeRoot
+			onTreeChanged: ItemUtils.resetModel(treeView.model, treeRoot.tree)
+		}
+		
+		Component.onCompleted : ItemUtils.resetModel(treeView.model, treeRoot.tree)
 		
 	}
 
