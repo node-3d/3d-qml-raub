@@ -6,8 +6,8 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, three, loop, Surface, gl, Points, doc } = core3d;
-const { View, Overlay, Rect } = qml;
+const { qml, Screen, loop, Surface, gl, Points, doc } = core3d;
+const { View, Rect } = qml;
 
 
 const VBO_SIZE = 10000;
@@ -76,14 +76,14 @@ const ui2 = new View({ width: 500, height: 500, file: 'qml/second.qml' });
 const surface3 = new Rect({ screen, size: [500, 500], pos: [100,-100], view: ui2 });
 
 
-let isMoving = false;
+// let isMoving = false;
 let isRotating = false;
 let mouse = { x: 0, y: 0 };
 
-document.on('mousedown', e => isRotating = true);
-document.on('mouseup', e => isRotating = false);
+doc.on('mousedown', () => isRotating = true);
+doc.on('mouseup', () => isRotating = false);
 
-document.on('mousemove', e => {
+doc.on('mousemove', e => {
 	
 	const dx = mouse.x - e.x;
 	const dy = mouse.y - e.y;

@@ -9,15 +9,14 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, gl, Points, doc, three } = core3d;
+const { qml, Screen, three } = core3d;
 const {
 	View,
 	Rect, Material,
 	Overlay, OverlayMaterial,
-	context, release,
 } = qml;
 
-const loop = (cb) => {
+const loop = cb => {
 	const timer = setInterval(cb, 16);
 	return () => clearInterval(timer);
 };
@@ -31,7 +30,7 @@ const classes = {
 	
 	Rect: {
 		create() {
-			return new Rect({ screen, view: ui })
+			return new Rect({ screen, view: ui });
 		},
 		props: ['textureId'],
 		methods: [],

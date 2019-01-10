@@ -7,8 +7,7 @@ module.exports = core => {
 	}
 	
 	const { three, qml } = core;
-	const { Texture, ShaderMaterial } = three;
-	const { release } = qml;
+	const { ShaderMaterial } = three;
 	
 	class OverlayMaterial extends ShaderMaterial {
 		
