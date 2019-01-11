@@ -6,7 +6,7 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, three, loop, doc } = core3d;
+const { qml, Screen, loop, doc } = core3d;
 const { View, Overlay } = qml;
 
 

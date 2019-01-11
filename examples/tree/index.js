@@ -6,7 +6,7 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, loop, gl, Points, doc } = core3d;
+const { qml, Screen, loop, doc } = core3d;
 const { View, Overlay, Method, Property } = qml;
 
 const screen = new Screen();
@@ -111,7 +111,7 @@ const theTree = [
 ];
 
 // Set initial value
-const tree  = new Property({ view: ui, name: 'dynamic-tree', key: 'tree', value: theTree });
+new Property({ view: ui, name: 'dynamic-tree', key: 'tree', value: theTree });
 const ioSet = new Method({ view: ui, name: 'dynamic-tree', key: 'ioSet' });
 
 ui.on('tree-clicked', e => console.log('tree-clicked', e));
