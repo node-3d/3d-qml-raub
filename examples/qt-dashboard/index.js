@@ -6,12 +6,18 @@ const qml3d = require('3d-qml-raub');
 qml3d(core3d);
 
 
-const { qml, Screen, loop, doc } = core3d;
+const { qml, Screen, loop, doc, Image } = core3d;
 const { View, Overlay } = qml;
 
 
 const screen = new Screen();
 loop(() => screen.draw());
+
+const icon = new Image();
+icon.src = __dirname + '/../qml.png';
+icon.on('load', () => doc.icon = icon);
+
+doc.title = 'Qt Dashboard';
 
 
 const F_KEY = 70;
