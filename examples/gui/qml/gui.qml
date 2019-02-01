@@ -1,11 +1,14 @@
 import QtQuick 2.7
+import QtQuick.Controls 1.4
 
 Rectangle {
 	
 	color: 'transparent'
 	anchors.fill: parent
 	
-	Button {
+	CustomButton {
+		
+		id: button
 		
 		objectName: 'myButton1'
 		
@@ -18,6 +21,16 @@ Rectangle {
 		anchors.top: parent.top
 		anchors.topMargin: 24
 		
+	}
+	
+	TextArea {
+		text: 'Hello'
+		textColor: 'black'
+		font.pixelSize: 24
+		
+		anchors.left: button.left
+		anchors.top: button.bottom
+		anchors.topMargin: 24
 	}
 	
 }
