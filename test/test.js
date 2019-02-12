@@ -71,7 +71,7 @@ describe('Node.js 3D QML', function () {
 	
 	this.timeout(10000);
 	
-	it('exports an function', () => {
+	it('exports a function', () => {
 		expect(qml3d).to.be.a('function');
 	});
 	
