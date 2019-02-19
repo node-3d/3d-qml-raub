@@ -14,11 +14,20 @@ module.exports = core => {
 	qml.View.init(process.cwd(), doc.platformWindow, doc.platformContext);
 	release();
 	
-	core.loop = cb => loop(() => {
-		View.update();
-		release();
-		cb();
-	});
+	
+	if (process.platform === 'linux') {
+		core.loop = cb => loop(() => {
+			View.update();
+			release();
+			cb();
+		});
+	} else {
+		core.loop = cb => loop(() => {
+			release();
+			cb();
+		});
+	}
+	
 	
 	Object.assign(core.qml, {
 		

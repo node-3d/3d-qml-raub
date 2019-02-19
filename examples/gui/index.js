@@ -73,6 +73,7 @@ doc.on('mouseup', ui.mouseup.bind(ui));
 doc.on('mousemove', ui.mousemove.bind(ui));
 doc.on('keydown', ui.keydown.bind(ui));
 doc.on('keyup', ui.keyup.bind(ui));
+doc.on('wheel', ui.wheel.bind(ui));
 
 new Overlay({ screen, view: ui });
 
@@ -82,6 +83,14 @@ let mouse = { x: 0, y: 0 };
 
 ui.on('mousedown', () => isRotating = true);
 ui.on('mouseup', () => isRotating = false);
+
+ui.on('mousedown', e => console.log('[>mousedown]', e));
+ui.on('mouseup', e => console.log('[>mouseup]', e));
+// ui.on('mousemove', e => console.log('[mousemove]', e));
+ui.on('keydown', e => console.log('[>keydown]', e));
+ui.on('keyup', e => console.log('[>keyup]', e));
+ui.on('wheel', e => console.log('[>wheel]', e));
+
 
 ui.on('mousemove', e => {
 	
