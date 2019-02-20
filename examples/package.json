@@ -2,9 +2,9 @@
 	"name": "example",
 	"version": "0.0.0",
 	"private": true,
-	"main": "scene-space/index",
+	"main": "gui/index",
 	"dependencies": {
-		"3d-qml-raub": "https://github.com/node-3d/3d-qml-raub.git",
-		"3d-core-raub": "https://github.com/node-3d/3d-core-raub.git"
+		"3d-qml-raub": "1.0.0",
+		"3d-core-raub": "2.0.0"
 	}
 }

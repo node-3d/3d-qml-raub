@@ -28,6 +28,17 @@ As any Node3D plugin, `3d-qml-raub` exports a single function. Given a Node3D
 object this function extends with `qml` property. Now this property holds
 whatever this plugin offers.
 
+See [examples](examples) for more details.
+
+> Note: **IMPORTANT**, using QML, keep in mind it has its own OpenGL context, so
+when you use yours, be aware it might be not the current one.
+Use `document.makeCurrent()` or `release()` (see exported below).
+
+
+---
+
+First, import/init the plugin:
+
 ```
 const core3d = require('3d-core-raub');
 const qml3d = require('3d-qml-raub');
@@ -40,7 +51,10 @@ const { Material, Overlay, OverlayMaterial, Rect } = qml;
 // ...
 ```
 
-You can use QML view as screen-size overlay like this:
+
+---
+
+Use QML view as screen-size overlay like this:
 
 ```
 const ui = new View({ width: screen.w, height: screen.h, file: `${__dirname}/qml/gui.qml` });
@@ -55,7 +69,13 @@ doc.on('wheel', ui.wheel.bind(ui));
 new Overlay({ screen, view: ui });
 ```
 
-Or an ordinary texture:
+This way you can run [real Qt examples](https://doc.qt.io/qt-5.11/qtquick-codesamples.html).
+One such example - [Dashboard](https://doc.qt.io/qt-5/qtquickextras-dashboard-example.html)
+was [copied](examples/qt-dashboard) from Qt instalation as a proof of concept.
+
+---
+
+You can also extract the texture from a view:
 
 ```
 // If the view already has some texture - use it
@@ -75,12 +95,8 @@ ui.on('reset', texId => {
 });
 ```
 
-
-See examples for more details.
-
-> Note: **IMPORTANT**, using QML, keep in mind it has its own OpenGL context, so
-when you use yours, be aware it might be not the current one.
-Use `document.makeCurrent()` or `release()` (see exported below).
+It can be used to create your own overlay or even to texture a scene-space object.
+This is actually demonstrated in [scene-space example](examples/scene-space).
 
 
 ## Exports
