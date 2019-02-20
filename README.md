@@ -34,13 +34,49 @@ const qml3d = require('3d-qml-raub');
 
 qml3d(core3d);
 
-const { three, qml, Image, doc } = core3d;
+const { three, qml, Image, doc, three } = core3d;
 const { Material, Overlay, OverlayMaterial, Rect } = qml;
 
 // ...
 ```
 
-See examples for quick start.
+You can use QML view as screen-size overlay like this:
+
+```
+const ui = new View({ width: screen.w, height: screen.h, file: `${__dirname}/qml/gui.qml` });
+
+doc.on('mousedown', ui.mousedown.bind(ui));
+doc.on('mouseup', ui.mouseup.bind(ui));
+doc.on('mousemove', ui.mousemove.bind(ui));
+doc.on('keydown', ui.keydown.bind(ui));
+doc.on('keyup', ui.keyup.bind(ui));
+doc.on('wheel', ui.wheel.bind(ui));
+
+new Overlay({ screen, view: ui });
+```
+
+Or an ordinary texture:
+
+```
+// If the view already has some texture - use it
+mesh.material.texture = view.textureId !== undefined ?
+	three.Texture.fromId(view.textureId, renderer) :
+	null;
+
+// If the view creates a new texture - update the material
+ui.on('reset', texId => {
+	
+	release();
+	
+	mesh.material.texture = texId !== undefined ?
+		three.Texture.fromId(texId, renderer) :
+		null;
+	
+});
+```
+
+
+See examples for more details.
 
 > Note: **IMPORTANT**, using QML, keep in mind it has its own OpenGL context, so
 when you use yours, be aware it might be not the current one.
@@ -53,8 +89,8 @@ See docs of [qml-raub](https://github.com/node-3d/qml-raub). This plugin
 reexports those as is.
 
 Additionally there are few classes specific for this plugin:
-* Rect - scene-space Three.js rectangle designed to display QML GUI.
-* Material - Three.js material for scene-space texturing with QML GUI.
-* Overlay - fullscreen Three.js overlay to display QML GUI.
-* OverlayMaterial - Three.js material for fullscreen overlay with QML GUI.
-* release() - switch OpenGL context to that of the default `document`. 
+* `Rect` - scene-space Three.js rectangle designed to display QML GUI.
+* `Material` - Three.js material for scene-space texturing with QML GUI.
+* `Overlay` - fullscreen Three.js overlay to display QML GUI.
+* `OverlayMaterial` - Three.js material for fullscreen overlay with QML GUI.
+* `release()` - switch OpenGL context to that of the default `document`.

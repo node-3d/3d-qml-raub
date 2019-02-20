@@ -1,7 +1,7 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "3d-qml-raub",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "QML 2D graphics plugin for Node.js 3D Core",
 	"license": "MIT",
 	"main": "index.js",
@@ -28,6 +28,6 @@
 		"url": "https://github.com/node-3d/3d-qml-raub.git"
 	},
 	"dependencies": {
-		"qml-raub": "https://github.com/node-3d/qml-raub.git"
+		"qml-raub": "1.0.0"
 	}
 }
