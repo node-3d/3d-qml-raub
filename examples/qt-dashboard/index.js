@@ -33,6 +33,10 @@ doc.on('keydown', e => {
 });
 
 
-const ui = new View({ width: screen.w, height: screen.h, file: 'qml/dashboard.qml' });
+const ui = new View({
+	width: screen.w,
+	height: screen.h,
+	file: `${__dirname}/qml/dashboard.qml`,
+});
 
 new Overlay({ screen, view: ui });
