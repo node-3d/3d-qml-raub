@@ -1,12 +1,10 @@
 'use strict';
 
-const core3d = require('3d-core-raub');
-const qml3d = require('3d-qml-raub');
-
-qml3d(core3d);
+const init = require('3d-core-raub');
+const qml3d = require('../..');
 
 
-const { qml, Screen, loop, doc } = core3d;
+const { qml, Screen, loop, doc } = init({ plugins: [qml3d] });
 const { View, Overlay, Method, Property } = qml;
 
 const screen = new Screen();

@@ -7,7 +7,7 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 [![Build Status](https://api.travis-ci.com/node-3d/3d-qml-raub.svg?branch=master)](https://travis-ci.com/node-3d/3d-qml-raub)
 [![CodeFactor](https://www.codefactor.io/repository/github/node-3d/3d-qml-raub/badge)](https://www.codefactor.io/repository/github/node-3d/3d-qml-raub)
 
-> npm i -s 3d-qml-raub
+> npm i 3d-qml-raub
 
 
 ## Synopsis
@@ -15,11 +15,6 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 QML 2D graphics plugin for Node.js 3D Core
 
 ![Example](examples/screenshot.jpg)
-
-> Note: compilation tools must be in place on your system.
-For Windows, use **ADMIN PRIVELEGED** command line:
-\`npm i -g windows-build-tools\`.
-Also **Windows** needs **vcredist 2013** to be installed.
 
 
 ## Usage

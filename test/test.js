@@ -2,14 +2,12 @@
 
 const { expect } = require('chai');
 
-
-const core3d = require('3d-core-raub');
-const qml3d = require('3d-qml-raub');
-
-qml3d(core3d);
+const init = require('3d-core-raub');
+const qml3d = require('..');
 
 
-const { qml, Screen, three } = core3d;
+const { qml, three, Screen } = init({ plugins: [qml3d] });
+
 const {
 	View,
 	Rect, Material,
@@ -70,14 +68,6 @@ describe('Node.js 3D QML', function () {
 	after(() => { l(); l = null; });
 	
 	this.timeout(10000);
-	
-	it('exports a function', () => {
-		expect(qml3d).to.be.a('function');
-	});
-	
-	it('extends the core', () => {
-		expect(core3d).to.have.property('qml');
-	});
 	
 	it('is an object', () => {
 		expect(qml).to.be.an('object');

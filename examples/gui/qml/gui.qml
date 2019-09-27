@@ -14,7 +14,7 @@ Rectangle {
 		
 		text: qsTr('Hello world!')
 		
-		onClicked: { console.log('o hai'); cb.call('ohai', { text: 'its me' }) }
+		onClicked: { console.log('o hai'); eventEmit('ohai', { text: 'its me' }) }
 		
 		anchors.left: parent.left
 		anchors.leftMargin: 24
