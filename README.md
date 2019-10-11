@@ -35,13 +35,13 @@ Use `document.makeCurrent()` or `release()` (see exported below).
 First, import/init the plugin:
 
 ```
-const core3d = require('3d-core-raub');
-const qml3d = require('3d-qml-raub');
+const init3dCore = require('3d-core-raub');
 
-qml3d(core3d);
-
-const { three, qml, Image, doc, three } = core3d;
-const { Material, Overlay, OverlayMaterial, Rect } = qml;
+const {
+	Image,
+	doc,
+	qml: { Material, Overlay, OverlayMaterial, Rect },
+} = init3dCore({ plugins: ['3d-qml-raub'] });
 
 // ...
 ```
