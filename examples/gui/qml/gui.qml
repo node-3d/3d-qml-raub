@@ -16,6 +16,10 @@ Rectangle {
 		
 		onClicked: { console.log('o hai'); eventEmit('ohai', { text: 'its me' }) }
 		
+		function func(x) {
+			console.log('func called', x);
+		}
+		
 		anchors.left: parent.left
 		anchors.leftMargin: 24
 		anchors.top: parent.top

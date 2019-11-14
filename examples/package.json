@@ -4,7 +4,6 @@
 	"private": true,
 	"main": "gui/index",
 	"scripts": {
-		"test": "mocha",
 		"postinstall": "cd .. && npm ci"
 	},
 	"dependencies": {
