@@ -111,5 +111,5 @@ ui.on('mousemove', e => {
 ui.on('ohai', data => {
 	console.log('RECV', data);
 	ui.set('myButton1', 'text', `${Date.now()}`);
-	ui.invoke('myButton1', 'func', JSON.stringify({ uid: 'dwad2312414', value: 17 }));
+	ui.invoke('myButton1', 'func', [{ uid: 'dwad2312414', value: 17 }]);
 });

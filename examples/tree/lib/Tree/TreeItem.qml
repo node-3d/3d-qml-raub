@@ -21,7 +21,7 @@ Row {
 		value: value,
 	})
 	
-	onValueChanged: cb.call('get', {
+	onValueChanged: eventEmit('get', {
 		name: uid,
 		key: 'value',
 		value: value,
@@ -56,7 +56,7 @@ Row {
 			
 			MouseArea {
 				anchors.fill : parent
-				onClicked    : cb.call('tree-clicked', { title: title, uid: uid })
+				onClicked    : eventEmit('tree-clicked', { title: title, uid: uid })
 			}
 			
 		}

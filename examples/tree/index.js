@@ -25,6 +25,7 @@ doc.on('keydown', e => {
 
 View.libs(`${__dirname}/lib`);
 const ui = new View({ width: screen.w, height: screen.h, file: `${__dirname}/qml/gui.qml` });
+ui.on('error', () => {});
 // const updateTree = new Method({ view: ui, name: 'dynamic-tree', key: 'update' });
 // const clearTree = new Method({ view: ui, name: 'dynamic-tree', key: 'clear' });
 
@@ -125,27 +126,22 @@ const connect = item => {
 		view : ui,
 		name : item.uid,
 		key  : 'value',
-		value: item.value,
-		setJs: v => {
-			item.value = v;
-		},
-		getJs: () => {
-			return item.value;
-		},
-		send() {
-			if (this.canSend() && this.value !== null) {
-				ioSet.call({ uid: this.name, value: this.value });
-			}
-		}
+		// value: item.value,
 	});
 	
 };
 
-(function _recurse(subtree) {
+const connectAll = function _recurse(subtree) {
 	subtree.forEach(item => {
 		if (item.subtree) {
 			_recurse(item.subtree);
 		}
 		connect(item);
 	});
-})(theTree);
+};
+
+if (ui.isLoaded) {
+	connectAll(theTree);
+} else {
+	ui.on('load', () => connectAll(theTree));
+}
