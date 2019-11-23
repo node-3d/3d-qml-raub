@@ -23,5 +23,8 @@ matrix:
       - echo OK.
   - name: "Windows"
     os: windows
+    before_install:
+      # Fix travis bug "git-sh-setup: file not found"
+      - export PATH=$PATH:"/c/Program Files/Git/mingw64/libexec/git-core"
     script:
       - echo OK.
