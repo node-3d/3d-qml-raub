@@ -12,7 +12,7 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 
 ## Synopsis
 
-QML 2D graphics plugin for Node.js 3D Core
+QML 2D graphics plugin for Node.js 3D Core. The backend is **Qt 5.13.0**.
 
 ![Example](examples/screenshot.jpg)
 
