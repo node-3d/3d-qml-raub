@@ -28,6 +28,6 @@
 		"url": "https://github.com/node-3d/3d-qml-raub.git"
 	},
 	"dependencies": {
-		"qml-raub": "https://github.com/node-3d/qml-raub.git"
+		"qml-raub": "2.0.0"
 	}
 }
