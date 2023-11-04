@@ -1,7 +1,7 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "3d-qml-raub",
-	"version": "2.0.1",
+	"version": "3.0.0",
 	"description": "QML 2D graphics plugin for Node.js 3D Core",
 	"license": "MIT",
 	"main": "index.js",
@@ -15,19 +15,34 @@
 	"files": [
 		"js",
 		"index.js",
+		"index.d.ts",
 		"LICENSE",
 		"package.json",
 		"README.md"
 	],
 	"engines": {
-		"node": ">=12.13.0",
-		"npm": ">=6.12.0"
+		"node": ">=18.16.0",
+		"npm": ">=9.5.1"
+	},
+	"scripts": {
+		"eslint": "eslint .",
+		"test": "node --test --watch .",
+		"test-ci": "node --test"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/node-3d/3d-qml-raub.git"
 	},
 	"dependencies": {
-		"qml-raub": "2.0.1"
+		"qml-raub": "^3.0.0"
+	},
+	"devDependencies": {
+		"3d-core-raub": "^4.1.1",
+		"@types/node": "^20.8.3",
+		"@types/three": "^0.158.1",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint": "^8.51.0",
+		"three": "^0.152.0",
+		"typescript": "^5.2.2"
 	}
 }

@@ -1,6 +1,7 @@
 'use strict';
 
-const { expect } = require('chai');
+const assert = require('node:assert').strict;
+const { describe, it } = require('node:test');
 
 const init = require('3d-core-raub');
 const qml3d = require('..');
@@ -13,11 +14,6 @@ const {
 	Rect, Material,
 	Overlay, OverlayMaterial,
 } = qml;
-
-const loop = cb => {
-	const timer = setInterval(cb, 16);
-	return () => clearInterval(timer);
-};
 
 const screen = new Screen();
 
@@ -61,14 +57,10 @@ const classes = {
 };
 
 
-describe('Node.js 3D QML', function () {
-	
-	let l;
-	before(() => { l = loop(() => screen.draw()); });
-	after(() => { l(); l = null; });
-	
-	this.timeout(10000);
-	
+const tested = describe('Node.js 3D QML', () => {
+	it('exports an object', () => {
+		assert.strictEqual(typeof inited, 'object');
+	});
 	it('is an object', () => {
 		expect(qml).to.be.an('object');
 	});
@@ -106,3 +98,15 @@ describe('Node.js 3D QML', function () {
 	}));
 	
 });
+
+(async () => {
+	const interv = setInterval(
+		() => {
+			View.update();
+			screen.draw();
+		},
+		15,
+	);
+	await tested;
+	clearInterval(interv);
+})();

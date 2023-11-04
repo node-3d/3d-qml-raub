@@ -2,49 +2,53 @@
 
 const qml = require('qml-raub');
 
-const { View, Property, Method } = qml;
 
+const _init = (opts = {}) => {
+	const optsFinal = {
+		...opts,
+		cwd: opts.cwd || process.cwd(),
+	};
+	
+	const { doc, gl, cwd, three } = optsFinal;
+	const { View, Property, Method } = qml;
 
-module.exports = core => {
-	
-	const { loop, doc } = core;
-	
 	const release = () => doc.makeCurrent();
 	
-	qml.View.init(process.cwd(), doc.platformWindow, doc.platformContext);
+	View.init(cwd, doc.platformWindow, doc.platformContext, doc.platformDevice);
 	release();
 	
-	
-	if (process.platform === 'linux') {
-		core.loop = cb => loop(() => {
+	const loop = (cb) => {
+		let i = 0;
+		
+		const animation = () => {
+			doc.requestAnimationFrame(animation);
+			
 			View.update();
 			release();
-			cb();
-		});
-	} else {
-		core.loop = cb => loop(() => {
-			release();
-			cb();
-		});
-	}
-	
-	
-	Object.assign(core.qml, {
+			
+			cb(i++);
+		};
 		
-		context : qml,
-		
-		release,
-		
-		View,
-		Property,
-		Method,
-		
-	});
+		doc.requestAnimationFrame(animation);
+	};
 	
+	const QmlOverlayMaterial = require('./qml-overlay-material')({ gl, three });
+	const QmlOverlay = require('./qml-overlay')({ doc, three });
 	
-	require('./material')(core);
-	require('./rect')(core);
-	require('./overlay-material')(core);
-	require('./overlay')(core);
-	
+	return {
+		View, Property, Method,
+		release, loop,
+		QmlOverlay, QmlOverlayMaterial,
+	};
 };
+
+let inited = null;
+const init = (optsFinal) => {
+	if (inited) {
+		return inited;
+	}
+	inited = _init(optsFinal);
+	return inited;
+};
+
+module.exports = { init };

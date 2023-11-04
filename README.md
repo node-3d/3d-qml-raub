@@ -2,22 +2,19 @@
 
 This is a part of [Node3D](https://github.com/node-3d) project.
 
-[![NPM](https://nodei.co/npm/3d-qml-raub.png?compact=true)](https://www.npmjs.com/package/3d-qml-raub)
+[![NPM](https://badge.fury.io/js/3d-qml-raub.svg)](https://badge.fury.io/js/3d-qml-raub)
+[![ESLint](https://github.com/node-3d/3d-qml-raub/actions/workflows/eslint.yml/badge.svg)](https://github.com/node-3d/3d-qml-raub/actions/workflows/eslint.yml)
+[![Test](https://github.com/node-3d/3d-qml-raub/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/3d-qml-raub/actions/workflows/test.yml)
 
-[![Build Status](https://api.travis-ci.com/node-3d/3d-qml-raub.svg?branch=master)](https://travis-ci.com/node-3d/3d-qml-raub)
-[![CodeFactor](https://www.codefactor.io/repository/github/node-3d/3d-qml-raub/badge)](https://www.codefactor.io/repository/github/node-3d/3d-qml-raub)
+```console
+npm i -s 3d-qml-raub
+```
 
-> npm i 3d-qml-raub
 
-
-## Synopsis
-
-QML 2D graphics plugin for Node.js 3D Core. The backend is **Qt 5.13.0**.
+QML-rendering extension for Node.js 3D Core. The QML backend is **Qt 5.13.0**.
 
 ![Example](examples/screenshot.jpg)
 
-
-## Usage
 
 As any Node3D plugin, `3d-qml-raub` exports a single function. Given a Node3D
 object this function extends with `qml` property. Now this property holds

@@ -1,0 +1,13 @@
+{
+	"name": "example",
+	"version": "0.0.0",
+	"private": true,
+	"type": "commonjs",
+	"scripts": {
+		"start": "npx ts-node-esm main.ts"
+	},
+	"dependencies": {
+		"3d-qml-raub": "file:../..",
+		"ts-node": "^10.9.1"
+	}
+}
