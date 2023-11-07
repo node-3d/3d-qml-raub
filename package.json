@@ -34,15 +34,15 @@
 		"url": "https://github.com/node-3d/3d-qml-raub.git"
 	},
 	"dependencies": {
-		"qml-raub": "^3.0.0"
+		"qml-raub": "^3.0.1"
 	},
 	"devDependencies": {
-		"3d-core-raub": "^4.1.1",
+		"3d-core-raub": "^4.2.0",
 		"@types/node": "^20.8.3",
 		"@types/three": "^0.158.1",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint": "^8.51.0",
-		"three": "^0.152.0",
+		"three": "^0.158.0",
 		"typescript": "^5.2.2"
 	}
 }

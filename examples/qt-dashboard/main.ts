@@ -1,11 +1,13 @@
 'use strict';
 
-
-'use strict';
-
-import three from 'three';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import * as three from 'three';
 import { init, addThreeHelpers } from '3d-core-raub';
 import { init as initQml } from '3d-qml-raub';
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const {
 	doc, Image: Img, gl,
@@ -18,8 +20,7 @@ const {
 
 addThreeHelpers(three, gl);
 
-console.log('ini', !!doc, !!doc?.getContext('webgl'));
-const { QmlOverlay, loop } = initQml({ doc, gl, cwd: process.cwd(), three });
+const { QmlOverlay, loop } = initQml({ doc, gl, cwd: __dirname, three });
 
 const icon = new Img(__dirname + '/../qml.png');
 icon.on('load', () => { doc.icon = (icon as unknown as typeof doc.icon); });
@@ -44,8 +45,8 @@ doc.on('resize', () => {
 const overlay = new QmlOverlay({ file: `${__dirname}/qml/dashboard.qml` });
 scene.add(overlay.mesh);
 
-const render = () => {
+const update = () => {
 	renderer.render(scene, cameraPerspective);
 };
 
-loop(() => render());
+loop(() => update());

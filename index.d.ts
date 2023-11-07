@@ -39,8 +39,9 @@ declare module "3d-qml-raub" {
 		texture: WebGLTexture;
 	}
 	
-	interface TNewableQmlOverlay extends View {
-		new(opts: TOptsView): TNewableQmlOverlay;
+	type TViewInstance = InstanceType<View>;
+	
+	type TOverlayInstance = TViewInstance & {
 		
 		/**
 		 * Overlay mesh visibility state.
@@ -65,6 +66,10 @@ declare module "3d-qml-raub" {
 		 * Three.js mesh for overlay. Add it to the scene.
 		*/
 		mesh: InstanceType<Mesh>;
+	};
+	
+	interface TNewableQmlOverlay extends View {
+		new(opts: TOptsView): TOverlayInstance;
 	}
 	
 	type TQml3D = TQml & {

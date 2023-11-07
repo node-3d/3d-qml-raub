@@ -53,13 +53,6 @@ const _init = ({ doc, three }) => {
 			doc.on('keydown', (e) => this._routeEvent('keydown', e));
 			doc.on('keyup', (e) => this._routeEvent('keyup', e));
 			doc.on('wheel', (e) => this._routeEvent('wheel', e));
-			
-			this.on('mousedown', release);
-			this.on('mouseup', release);
-			this.on('mousemove', release);
-			this.on('keydown', release);
-			this.on('keyup', release);
-			this.on('wheel', release);
 		}
 		
 		_routeEvent(name, e) {

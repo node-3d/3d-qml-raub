@@ -2,11 +2,15 @@
 	"name": "example",
 	"version": "0.0.0",
 	"private": true,
-	"main": "gui/index",
+	"type": "module",
 	"scripts": {
-		"postinstall": "cd .. && npm ci"
+		"dashboard": "npx ts-node-esm qt-dashboard/main.ts",
+		"gui": "npx ts-node-esm gui/main.ts",
+		"fps": "npx ts-node-esm fps/main.ts"
 	},
 	"dependencies": {
-		"3d-core-raub": "3.0.0"
+		"3d-qml-raub": "file:..",
+		"tsconfig-paths": "^4.2.0",
+		"ts-node": "^10.9.1"
 	}
 }

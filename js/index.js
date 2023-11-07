@@ -32,13 +32,32 @@ const _init = (opts = {}) => {
 		doc.requestAnimationFrame(animation);
 	};
 	
-	const QmlOverlayMaterial = require('./qml-overlay-material')({ gl, three });
+	const textureFromId = (id, renderer) => {
+		const rawTexture = new gl.WebGLTexture(id);
+		
+		const texture = new three.Texture();
+		
+		let properties = null;
+		if (!renderer.properties) {
+			properties = texture;
+		} else {
+			properties = renderer.properties.get(texture); // !!!!
+		}
+		
+		properties.__webglTexture = rawTexture;
+		properties.__webglInit = true;
+		
+		return texture;
+	};
+	
+	const QmlMaterial = require('./qml-material')({ textureFromId, three });
+	const QmlOverlayMaterial = require('./qml-overlay-material')({ three });
 	const QmlOverlay = require('./qml-overlay')({ doc, three });
 	
 	return {
 		View, Property, Method,
 		release, loop,
-		QmlOverlay, QmlOverlayMaterial,
+		QmlMaterial, QmlOverlayMaterial, QmlOverlay,
 	};
 };
 
