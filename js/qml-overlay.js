@@ -30,14 +30,14 @@ const _init = ({ doc, three }) => {
 			
 			super(optsFinal);
 			
+			release();
+			
 			this._isVisible = true;
 			this._isDisabled = false;
 			this._mat = new QmlOverlayMaterial();
 			this._mesh = new three.Mesh(new three.PlaneGeometry(2, 2), this._mat);
 			this._mesh.frustumCulled = false;
 			this._mesh.renderOrder = Infinity;
-			
-			release();
 			
 			doc.on('resize', ({ width, height }) => { this.wh = [width, height]; });
 			

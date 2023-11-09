@@ -16,22 +16,32 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const {
 	doc, Image: Img, gl, glfw,
-} = init({
-	isGles3: true,
-	isWebGL2: true,
-});
+} = init({ isGles3: true, isWebGL2: true });
 
 addThreeHelpers(three, gl);
 
 doc.setPointerCapture();
 
-const { QmlOverlay, Property, loop, release } = initQml({ doc, gl, cwd: __dirname, three });
+const {
+    QmlOverlay, Property, View, loop, release, textureFromId,
+} = initQml({ doc, gl, cwd: __dirname, three });
 
 const icon = new Img(__dirname + '/../qml.png');
 icon.on('load', () => { doc.icon = icon; });
 doc.title = 'QML FPS';
 
+type THudState = 'hud' | 'esc';
+let hudState: THudState = 'hud';
+let gameScore: number = 0;
+
 const clock = new three.Clock();
+
+const renderer = new three.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(doc.w, doc.h);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = three.VSMShadowMap;
+renderer.toneMapping = three.ACESFilmicToneMapping;
 
 const scene = new three.Scene();
 scene.background = new three.Color(0x88ccee);
@@ -39,6 +49,37 @@ scene.fog = new three.Fog(0x88ccee, 0, 50);
 
 const overlay = new QmlOverlay({ file: `${__dirname}/qml/Hud.qml` });
 scene.add(overlay.mesh);
+
+const scoreView = new View({ file: `${__dirname}/qml/Score.qml` });
+
+const materialScore = new three.SpriteMaterial();
+materialScore.map = textureFromId(scoreView.textureId, renderer);
+scoreView.on('reset', (textureId) => {
+    release();
+    materialScore.map = textureFromId(textureId, renderer);
+});
+
+const spriteScore = new three.Sprite(materialScore);
+spriteScore.position.set(0, 5, 0);
+spriteScore.scale.set(5, 5, 1);
+scene.add(spriteScore);
+
+const propScore = new Property<number>({
+    view: scoreView, name: 'score', key: 'score', value: gameScore,
+});
+
+setInterval(
+    () => {
+        gameScore++;
+        propScore.value = gameScore;
+    },
+    1000,
+);
+
+
+const propHudMode = new Property<THudState>({
+    view: overlay, name: 'hud', key: 'mode', value: hudState,
+});
 
 overlay.on('custom-esc', (event) => {
     release();
@@ -50,13 +91,6 @@ overlay.on('custom-esc', (event) => {
     if (event.button === 'quit') {
         process.exit(0)
     }
-});
-
-type THudState = 'hud' | 'esc';
-let hudState: THudState = 'hud';
-
-const propHudMode = new Property<THudState>({
-    view: overlay, name: 'hud', key: 'mode', value: hudState,
 });
 
 const camera = new three.PerspectiveCamera(95, doc.w / doc.h, 0.1, 1000);
@@ -80,13 +114,6 @@ directionalLight.shadow.mapSize.height = 1024;
 directionalLight.shadow.radius = 4;
 directionalLight.shadow.bias = -0.00006;
 scene.add(directionalLight);
-
-const renderer = new three.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(doc.w, doc.h);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = three.VSMShadowMap;
-renderer.toneMapping = three.ACESFilmicToneMapping;
 
 const GRAVITY = 30;
 const NUM_SPHERES = 100;

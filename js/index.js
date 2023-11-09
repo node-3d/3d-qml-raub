@@ -56,7 +56,7 @@ const _init = (opts = {}) => {
 	
 	return {
 		View, Property, Method,
-		release, loop,
+		release, loop, textureFromId,
 		QmlMaterial, QmlOverlayMaterial, QmlOverlay,
 	};
 };

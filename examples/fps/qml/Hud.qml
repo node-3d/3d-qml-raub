@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.3
 
 Item {
 	objectName: 'hud'
-	
 	anchors.fill: parent
 	
 	FontLoader { id: future; source: 'fonts/Kenney Future Narrow.ttf' }

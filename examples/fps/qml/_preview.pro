@@ -30,8 +30,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     EscMenu.qml \
-    EscMenuItem.qml \
     Hud.qml \
     HudTextSmall.qml \
     HudView.qml \
+    MenuItem.qml \
+    Score.qml \
     _preview.qml

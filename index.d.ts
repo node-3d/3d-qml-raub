@@ -2,41 +2,36 @@ declare module "3d-qml-raub" {
 	type TQml = typeof import('qml-raub');
 	type TThree = typeof import('three');
 	type TWebgl = typeof import('webgl-raub');
-	type RawShaderMaterial = typeof import('three').RawShaderMaterial;
+	type ShaderMaterial = typeof import('three').ShaderMaterial;
+	type WebGLRenderer = typeof import('three').WebGLRenderer;
+	type Texture = typeof import('three').Texture;
 	type Mesh = typeof import('three').Mesh;
 	type TOptsView = import('qml-raub').TOptsView;
 	type View = typeof import('qml-raub').View;
 	type Document = import('glfw-raub').Document;
-	type WebGLTexture = typeof import('webgl-raub').WebGLTexture;
-	
-	type TUnknownObject = Readonly<{ [id: string]: unknown }>;
 	
 	type TLoop = (cb: (i: number) => void) => void;
 	
-	type RawShaderMaterialInstance = InstanceType<RawShaderMaterial>;
-	type OptsMaterialInstance = ConstructorParameters<RawShaderMaterial>[0];
+	type WebGLRendererInstance = InstanceType<WebGLRenderer>;
+	type TextureInstance = InstanceType<Texture>;
+	type ShaderMaterialInstance = InstanceType<ShaderMaterial>;
+	type OptsMaterialInstance = ConstructorParameters<ShaderMaterial>[0];
 	
-	type TOpt<T, P extends string> = T extends { [id: string]: unknown } ? T[P] : undefined;
-	
-	type TOptsQmlOverlayMaterial = Readonly<Partial<{
-		side: TOpt<OptsMaterialInstance, 'side'>;
-		uniforms: TOpt<OptsMaterialInstance, 'uniforms'>;
-		depthWrite: TOpt<OptsMaterialInstance, 'depthWrite'>;
-		depthTest: TOpt<OptsMaterialInstance, 'depthTest'>;
-		transparent: TOpt<OptsMaterialInstance, 'transparent'>;
-		lights: TOpt<OptsMaterialInstance, 'lights'>;
-		vertexShader: TOpt<OptsMaterialInstance, 'vertexShader'>;
-		fragmentShader: TOpt<OptsMaterialInstance, 'fragmentShader'>;
-		glslVersion: TOpt<OptsMaterialInstance, 'glslVersion'>;
-	}>>;
-	
-	interface TNewableQmlOverlayMaterial extends RawShaderMaterial {
-		new(opts: TOptsQmlOverlayMaterial): TNewableQmlOverlayMaterial;
-		
+	type TMaterialInstance = ShaderMaterialInstance & {
 		/**
-		 * QML Texture for fullscreen rendering.
+		 * QML Texture ID.
 		*/
-		texture: WebGLTexture;
+		textureId: number | null;
+	};
+	
+	interface TNewableQmlMaterial extends ShaderMaterial {
+		new(opts: OptsMaterialInstance): TMaterialInstance;
+		
+	}
+	
+	interface TNewableQmlOverlayMaterial extends TNewableQmlMaterial {
+		new(opts: OptsMaterialInstance): TMaterialInstance;
+		
 	}
 	
 	type TViewInstance = InstanceType<View>;
@@ -81,6 +76,14 @@ declare module "3d-qml-raub" {
 		release: () => void;
 		
 		/**
+		 * Create a `THREE.Texture` from a raw OpenGL resource ID.
+		 * 
+		 * Wraps ID into a `WebGLTexture` and then wraps that into a `THREE.Texture`.
+		 * Some special hacks provide that the THREE's texture lookup works properly.
+		 */
+		textureFromId: (id: number | null, renderer: WebGLRendererInstance) => TextureInstance;
+		
+		/**
 		 * Adjusted frame-loop helper, calls `release` automatically.
 		 */
 		loop: TLoop,
@@ -91,6 +94,13 @@ declare module "3d-qml-raub" {
 		 * Loads and displays a QML file as fullscreen overlay.
 		*/
 		QmlOverlay: TNewableQmlOverlay,
+		
+		/**
+		 * QML basic material.
+		 * 
+		 * Basic unlit material with a QML texture on it.
+		*/
+		QmlMaterial: TNewableQmlMaterial,
 		
 		/**
 		 * Fullscreen QML overlay material.

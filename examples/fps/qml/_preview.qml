@@ -14,17 +14,17 @@ Window {
 	}
 	
 	Image {
-		id: image
 		anchors.fill: parent
 		source: "_preview.png"
 		fillMode: Image.Stretch
 	}
 	
 	Hud {
-		id: hud
-		x: 243
-		y: 19
 		mode: "hud"
+	}
+	
+	Score {
+		score: 123
 	}
 }
 

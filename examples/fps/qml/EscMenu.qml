@@ -10,13 +10,13 @@ Rectangle {
 		anchors.centerIn: parent
 		spacing: 32
 		
-		EscMenuItem {
+		MenuItem {
 			text: 'Resume'
 			Layout.alignment: Qt.AlignCenter
 			onPressed: eventEmit('custom-esc', { button: 'resume' });
 		}
 		
-		EscMenuItem {
+		MenuItem {
 			text: 'Quit'
 			Layout.alignment: Qt.AlignCenter
 			onPressed: eventEmit('custom-esc', { button: 'quit' });
