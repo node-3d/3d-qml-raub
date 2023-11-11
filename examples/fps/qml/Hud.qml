@@ -10,8 +10,13 @@ Item {
 	FontLoader { id: bookxel; source: 'fonts/Bookxel.otf' }
 	
 	property alias hp: hud.hp
-	property alias ammo: hud.ammo
-	property string mode: 'hud'
+	property alias charge: hud.charge
+	property alias fuel: hud.fuel
+	property string mode: 'start'
+	
+	StartMenu {
+		visible: mode === 'start'
+	}
 	
 	HudView {
 		id: hud
@@ -19,7 +24,10 @@ Item {
 	}
 	
 	EscMenu {
-		id: esc
 		visible: mode === 'esc'
+	}
+	
+	OverMenu {
+		visible: mode === 'over'
 	}
 }

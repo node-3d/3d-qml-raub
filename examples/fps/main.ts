@@ -20,8 +20,6 @@ const {
 
 addThreeHelpers(three, gl);
 
-doc.setPointerCapture();
-
 const {
     QmlOverlay, Property, View, loop, release, textureFromId,
 } = initQml({ doc, gl, cwd: __dirname, three });
@@ -30,13 +28,17 @@ const icon = new Img(__dirname + '/../qml.png');
 icon.on('load', () => { doc.icon = icon; });
 doc.title = 'QML FPS';
 
-type THudState = 'hud' | 'esc';
-let hudState: THudState = 'hud';
+type THudState = 'start' | 'hud' | 'esc' | 'over';
+let hudState: THudState = 'start';
 let gameScore: number = 0;
+let gunCharge: number = 0;
+let gunFuel: number = 1;
+const GUN_REFILL_RATE = 0.1;
+const GUN_CHARGE_RATE = 0.7;
 
 const clock = new three.Clock();
 
-const renderer = new three.WebGLRenderer({ antialias: true });
+const renderer = new three.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(doc.w, doc.h);
 renderer.shadowMap.enabled = true;
@@ -51,7 +53,6 @@ const overlay = new QmlOverlay({ file: `${__dirname}/qml/Hud.qml` });
 scene.add(overlay.mesh);
 
 const scoreView = new View({ file: `${__dirname}/qml/Score.qml` });
-
 const materialScore = new three.SpriteMaterial();
 materialScore.map = textureFromId(scoreView.textureId, renderer);
 scoreView.on('reset', (textureId) => {
@@ -68,30 +69,14 @@ const propScore = new Property<number>({
     view: scoreView, name: 'score', key: 'score', value: gameScore,
 });
 
-setInterval(
-    () => {
-        gameScore++;
-        propScore.value = gameScore;
-    },
-    1000,
-);
+// setInterval(
+//     () => {
+//         gameScore++;
+//         propScore.value = gameScore;
+//     },
+//     1000,
+// );
 
-
-const propHudMode = new Property<THudState>({
-    view: overlay, name: 'hud', key: 'mode', value: hudState,
-});
-
-overlay.on('custom-esc', (event) => {
-    release();
-    if (event.button === 'resume') {
-        hudState = 'hud';
-        propHudMode.value = hudState;
-        doc.setPointerCapture();
-    }
-    if (event.button === 'quit') {
-        process.exit(0)
-    }
-});
 
 const camera = new three.PerspectiveCamera(95, doc.w / doc.h, 0.1, 1000);
 camera.rotation.order = 'YXZ';
@@ -115,13 +100,27 @@ directionalLight.shadow.radius = 4;
 directionalLight.shadow.bias = -0.00006;
 scene.add(directionalLight);
 
-const GRAVITY = 30;
+const GRAVITY = 20;
 const NUM_SPHERES = 100;
 const SPHERE_RADIUS = 0.2;
 const STEPS_PER_FRAME = 5;
+const POS_SPHERE_HIDDEN = new three.Vector3(0, -100, 0);
+const POS_PLAYER_START = new three.Vector3(0, 0.35, 0);
+const POS_PLAYER_END = new three.Vector3(0, 1, 0);
 
 const sphereGeometry = new three.IcosahedronGeometry(SPHERE_RADIUS, 5);
 const sphereMaterial = new three.MeshLambertMaterial({ color: 0xdede8d });
+
+const worldOctree = new Octree();
+const playerCollider = new Capsule(POS_PLAYER_START.clone(), POS_PLAYER_END.clone(), 0.35);
+const playerVelocity = new three.Vector3();
+const playerDirection = new three.Vector3();
+let playerOnFloor = false;
+let mouseTime = 0;
+const keyStates: Record<string, boolean> = {};
+const vector1 = new three.Vector3();
+const vector2 = new three.Vector3();
+const vector3 = new three.Vector3();
 
 type TSphere = {
     mesh: three.Mesh,
@@ -140,21 +139,80 @@ for (let i = 0; i < NUM_SPHERES; i ++) {
     
     spheres.push({
         mesh: sphere,
-        collider: new three.Sphere(new three.Vector3(0, - 100, 0), SPHERE_RADIUS),
+        collider: new three.Sphere(POS_SPHERE_HIDDEN.clone(), SPHERE_RADIUS),
         velocity: new three.Vector3(),
     });
 }
 
-const worldOctree = new Octree();
-const playerCollider = new Capsule(new three.Vector3(0, 0.35, 0), new three.Vector3(0, 1, 0), 0.35);
-const playerVelocity = new three.Vector3();
-const playerDirection = new three.Vector3();
-let playerOnFloor = false;
-let mouseTime = 0;
-const keyStates: Record<string, boolean> = {};
-const vector1 = new three.Vector3();
-const vector2 = new three.Vector3();
-const vector3 = new three.Vector3();
+const resetPlayer = () => {
+    playerVelocity.set(0, 0, 0);
+    playerDirection.set(0, 0, 0);
+    playerCollider.start.copy(POS_PLAYER_START);
+    playerCollider.end.copy(POS_PLAYER_END);
+    playerCollider.radius = 0.35;
+    camera.position.copy(playerCollider.end);
+    camera.rotation.set(0, 0, 0);
+    playerOnFloor = false;
+};
+
+const resetSpheres = () => {
+    sphereIdx = 0;
+    for (const sphere of spheres) {
+        sphere.collider.center.copy(POS_SPHERE_HIDDEN.clone());
+    }
+};
+
+const restartGame = () => {
+    resetPlayer();
+    mouseTime = 0;
+    resetSpheres();
+    
+    gameScore = 0;
+    hudState = 'hud';
+    gunCharge = 0;
+    gunFuel = 1;
+    propHudMode.value = 'hud';
+    doc.setPointerCapture();
+};
+
+const propHudMode = new Property<THudState>({
+    view: overlay, name: 'hud', key: 'mode',
+});
+
+const propHudCharge = new Property<number>({
+    view: overlay, name: 'hud', key: 'charge',
+});
+
+const propHudFuel = new Property<number>({
+    view: overlay, name: 'hud', key: 'fuel',
+});
+
+setInterval(
+    () => {
+        propHudCharge.value = gunCharge;
+        propHudFuel.value = gunFuel;
+    },
+    100,
+);
+
+overlay.on('custom-esc', (event) => {
+    release();
+    if (event.button === 'resume') {
+        mouseTime = 0;
+        hudState = 'hud';
+        propHudMode.value = hudState;
+        doc.setPointerCapture();
+    }
+    if (event.button === 'start') {
+        restartGame();
+    }
+    if (event.button === 'restart') {
+        restartGame();
+    }
+    if (event.button === 'quit') {
+        process.exit(0)
+    }
+});
 
 
 doc.on('keydown', (e) => {
@@ -170,6 +228,9 @@ doc.on('keyup', (e) => {
     release();
     keyStates[e['keyCode']] = false;
     if (e['keyCode'] === glfw.extraCodes[glfw.KEY_ESCAPE]) {
+        if (hudState !== 'hud' && hudState !== 'esc') {
+            return;
+        }
         hudState = hudState === 'hud' ? 'esc' : 'hud';
         if (hudState === 'hud') {
             doc.setPointerCapture();
@@ -231,8 +292,9 @@ const throwBall = () => {
     sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
     
     // throw the ball with more force if we hold the button longer, and if we move forward
-    const impulse = 5 + 50 * (1 - Math.exp((mouseTime - Date.now()) * 0.001));
+    const impulse = 5 + 50 * gunCharge;
     mouseTime = 0;
+    gunCharge = 0;
     
     sphere.velocity.copy(playerDirection).multiplyScalar(impulse);
     sphere.velocity.addScaledVector(playerVelocity, 2);
@@ -401,7 +463,7 @@ const controls = (deltaTime: number) => {
     
     if (playerOnFloor) {
         if (keyStates[glfw.KEY_SPACE]) {
-            playerVelocity.y = 15;
+            playerVelocity.y = 10;
         }
     }
 };
@@ -436,25 +498,32 @@ const teleportPlayerIfOob = () => {
         return;
     }
     
-    playerCollider.start.set(0, 0.35, 0);
-    playerCollider.end.set(0, 1, 0);
-    playerCollider.radius = 0.35;
-    camera.position.copy(playerCollider.end);
-    camera.rotation.set(0, 0, 0);
+    resetPlayer();
 };
 
 
 const animate = () => {
-    const deltaTime = Math.min(0.05, clock.getDelta()) / STEPS_PER_FRAME;
+    const deltaTime = Math.min(0.05, clock.getDelta());
+    const deltaStep = deltaTime / STEPS_PER_FRAME;
     
-    // we look for collisions in substeps to mitigate the risk of
-    // an object traversing another too quickly for detection.
+    gunFuel = Math.min(1, gunFuel + deltaTime * GUN_REFILL_RATE);
     
-    for (let i = 0; i < STEPS_PER_FRAME; i++) {
-        controls(deltaTime);
-        updatePlayer(deltaTime);
-        updateSpheres(deltaTime);
-        teleportPlayerIfOob();
+    if (mouseTime) {
+        const dc = Math.min(1 - gunCharge, gunFuel, deltaTime * GUN_CHARGE_RATE);
+        gunFuel -= dc;
+        gunCharge += dc;
+    }
+    
+    if (hudState === 'hud') {
+        // we look for collisions in substeps to mitigate the risk of
+        // an object traversing another too quickly for detection.
+        
+        for (let i = 0; i < STEPS_PER_FRAME; i++) {
+            controls(deltaStep);
+            updatePlayer(deltaStep);
+            updateSpheres(deltaStep);
+            teleportPlayerIfOob();
+        }
     }
     
     renderer.render(scene, camera);

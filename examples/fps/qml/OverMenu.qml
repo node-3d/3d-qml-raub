@@ -11,12 +11,6 @@ Rectangle {
 		spacing: 32
 		
 		MenuItem {
-			text: 'Resume'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'resume' });
-		}
-		
-		MenuItem {
 			text: 'Restart'
 			Layout.alignment: Qt.AlignCenter
 			onPressed: eventEmit('custom-esc', { button: 'restart' });

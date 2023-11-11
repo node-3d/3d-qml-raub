@@ -34,5 +34,7 @@ DISTFILES += \
     HudTextSmall.qml \
     HudView.qml \
     MenuItem.qml \
+    OverMenu.qml \
     Score.qml \
+    StartMenu.qml \
     _preview.qml
