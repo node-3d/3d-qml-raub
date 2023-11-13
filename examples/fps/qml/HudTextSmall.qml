@@ -2,6 +2,8 @@ import QtQuick 2.7
 
 
 Text {
+	FontLoader { id: bookxel; source: 'fonts/Bookxel.otf' }
+	
 	readonly property int fontSizeSmall: 36
 	readonly property string shadowColor: '#333333'
 	

@@ -2,7 +2,9 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.3
 
 
-Item {
+MouseArea {
+	FontLoader { id: future; source: 'fonts/Kenney Future Narrow.ttf' }
+	
 	readonly property int fontSizeEsc: 48
 	readonly property string shadowColor: '#333333'
 	readonly property string textColor: '#CCCCCC'
@@ -15,8 +17,11 @@ Item {
 	
 	property alias text: buttonText.text
 	
+	hoverEnabled: true
 	width: buttonText.width + 2 * paddingHor
 	height: buttonText.height
+	
+	onClicked: pressed()
 	
 	Text {
 		id: buttonText
@@ -25,16 +30,9 @@ Item {
 		font.pixelSize: button.fontSizeEsc
 		font.bold: true
 		font.family: future.name
-		color: mouseArea.containsMouse ? button.textColorHover : button.textColor
+		color: button.containsMouse ? button.textColorHover : button.textColor
 		
 		style: Text.Raised;
 		styleColor: button.shadowColor
-	}
-	
-	MouseArea {
-		id: mouseArea
-		hoverEnabled: true
-		anchors.fill: parent
-		onClicked: parent.pressed()
 	}
 }

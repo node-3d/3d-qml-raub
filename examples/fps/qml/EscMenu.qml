@@ -23,9 +23,9 @@ Rectangle {
 		}
 		
 		MenuItem {
-			text: 'Quit'
+			text: 'Leave'
 			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'quit' });
+			onPressed: eventEmit('custom-esc', { button: 'leave' });
 		}
 	}
 }

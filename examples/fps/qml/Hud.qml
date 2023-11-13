@@ -1,7 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 
-
 Item {
 	objectName: 'hud'
 	anchors.fill: parent
@@ -12,6 +11,7 @@ Item {
 	property alias hp: hud.hp
 	property alias charge: hud.charge
 	property alias fuel: hud.fuel
+	property alias score: over.score
 	property string mode: 'start'
 	
 	StartMenu {
@@ -28,6 +28,7 @@ Item {
 	}
 	
 	OverMenu {
+		id: over
 		visible: mode === 'over'
 	}
 }

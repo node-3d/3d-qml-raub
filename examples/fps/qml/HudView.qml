@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.3
 
 
 Item {
-	readonly property int fontSizeHp: 84
 	readonly property int ammoBarWidth: 400
 	readonly property int ammoBarHeight: 42
 	readonly property int paddingHor: 42
@@ -15,7 +14,6 @@ Item {
 	id: hudView
 	anchors.fill: parent
 	
-	objectName: 'hud'
 	property real hp: 100
 	property real charge: 0
 	property real fuel: 1
@@ -51,16 +49,9 @@ Item {
 			Layout.topMargin: hudView.paddingVert
 			Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
 			
-			Text {
+			HpTextLarge {
 				text: Math.floor(hudView.hp)
-				
-				font.pixelSize: fontSizeHp
-				font.bold: true
-				font.family: future.name
 				color: getColor(hudView.hp)
-				
-				style: Text.Raised;
-				styleColor: hudView.shadowColor
 			}
 			
 			HudTextSmall {
@@ -97,7 +88,7 @@ Item {
 					anchors.topMargin: 3
 					
 					border.color: hudView.shadowColor
-					border.width: 1
+					border.width: 2
 					color: 'green'
 					
 					transitions: Transition {
@@ -116,7 +107,7 @@ Item {
 					anchors.bottomMargin: 3
 					
 					border.color: hudView.shadowColor
-					border.width: 1
+					border.width: 2
 					color: 'orange'
 					
 					transitions: Transition {

@@ -3,6 +3,9 @@ import QtQuick.Layouts 1.3
 
 
 Item {
+	FontLoader { id: future; source: 'fonts/Kenney Future Narrow.ttf' }
+	FontLoader { id: bookxel; source: 'fonts/Bookxel.otf' }
+	
 	readonly property int fontSizeTitle: 84
 	readonly property int fontSizeValue: 110
 	readonly property string shadowColor: '#222222'
@@ -12,9 +15,6 @@ Item {
 	anchors.fill: parent
 	
 	property real score: 0
-	
-	FontLoader { id: future; source: 'fonts/Kenney Future Narrow.ttf' }
-	FontLoader { id: bookxel; source: 'fonts/Bookxel.otf' }
 	
 	ColumnLayout {
 		anchors.centerIn: parent
@@ -33,7 +33,7 @@ Item {
 		}
 		
 		Text {
-			text: root.score
+			text: Math.min(9999, root.score)
 			Layout.alignment: Qt.AlignCenter
 			
 			font.pixelSize: fontSizeValue

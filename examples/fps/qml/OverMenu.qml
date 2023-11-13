@@ -6,9 +6,18 @@ Rectangle {
 	anchors.fill: parent
 	color: '#BB000000'
 	
+	property alias score: score.score
+	
 	ColumnLayout {
 		anchors.centerIn: parent
 		spacing: 32
+		
+		Item {
+			Layout.alignment: Qt.AlignCenter
+			Score {
+				id: score
+			}
+		}
 		
 		MenuItem {
 			text: 'Restart'
