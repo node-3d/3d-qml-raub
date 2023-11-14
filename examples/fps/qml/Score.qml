@@ -21,7 +21,7 @@ Item {
 		
 		Text {
 			text: 'SCORE'
-			Layout.alignment: Qt.AlignCenter
+			Layout.alignment: Qt.AlignHCenter
 			
 			font.pixelSize: fontSizeTitle
 			font.bold: true
@@ -34,7 +34,7 @@ Item {
 		
 		Text {
 			text: Math.min(9999, root.score)
-			Layout.alignment: Qt.AlignCenter
+			Layout.alignment: Qt.AlignHCenter
 			
 			font.pixelSize: fontSizeValue
 			font.bold: true

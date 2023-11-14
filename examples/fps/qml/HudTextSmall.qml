@@ -15,6 +15,6 @@ Text {
 	color: 'white'
 	antialiasing: true
 	
-	style: Text.Raised;
+	style: Text.Outline;
 	styleColor: shadowColor
 }

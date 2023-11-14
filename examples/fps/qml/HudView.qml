@@ -1,10 +1,11 @@
 import QtQuick 2.7
-import QtQuick.Layouts 1.3
 
 
 Item {
-	readonly property int ammoBarWidth: 400
-	readonly property int ammoBarHeight: 42
+	readonly property int ammoBarWidth: width / 3
+	readonly property int ammoBarHeight: ammoBarWidth / 8
+	readonly property int fontSizeHp: ammoBarHeight * 2
+	readonly property int fontSizeCaption: ammoBarHeight
 	readonly property int paddingHor: 42
 	readonly property int paddingVert: 42
 	readonly property int maxColorValue: 0xAA
@@ -36,90 +37,120 @@ Item {
 		}
 	}
 	
-	RowLayout {
+	Item {
 		id: bottomRow
 		
 		anchors.bottom: parent.bottom
 		anchors.left: parent.left
 		anchors.right: parent.right
 		
-		ColumnLayout {
-			Layout.leftMargin: hudView.paddingHor
-			Layout.bottomMargin: hudView.paddingVert
-			Layout.topMargin: hudView.paddingVert
-			Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+		Column {
+			anchors.bottom: parent.bottom
+			anchors.left: parent.left
+			
+			leftPadding: hudView.paddingHor
+			bottomPadding: hudView.paddingVert
 			
 			HpTextLarge {
 				text: Math.floor(hudView.hp)
-				color: getColor(hudView.hp)
+				color: hudView.getColor(hudView.hp)
+				font.pixelSize: hudView.fontSizeHp
 			}
 			
 			HudTextSmall {
 				text: 'Health'
-				Layout.alignment: Qt.AlignLeft
+				font.pixelSize: hudView.fontSizeCaption
 			}
 		}
 		
-		ColumnLayout {
-			Layout.rightMargin: hudView.paddingHor
-			Layout.bottomMargin: hudView.paddingVert
-			Layout.topMargin: hudView.paddingVert
-			Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+		Column {
+			id: column
+			anchors.bottom: parent.bottom
+			anchors.right: parent.right
 			
-			spacing: 18
+			rightPadding: hudView.paddingHor
+			bottomPadding: hudView.paddingVert
 			
-			Rectangle {
-				width: hudView.ammoBarWidth
-				height: hudView.ammoBarHeight
-				color: 'transparent'
-				radius: 4
-				
-				border.color: getColor(hudView.fuel * 100)
-				border.width: 2
+			spacing: hudView.fontSizeHp / 4
+			
+			Item {
+				width: textCharge.width
+				height: hudView.ammoBarWidth
 				
 				Rectangle {
-					width: hudView.fuel * hudView.ammoBarWidth - 6
-					height: hudView.ammoBarHeight - 6
-					radius: 2
-					
-					anchors.right: parent.right
-					anchors.rightMargin: 3
-					anchors.top: parent.top
-					anchors.topMargin: 3
-					
-					border.color: hudView.shadowColor
-					border.width: 2
-					color: 'green'
-					
-					transitions: Transition {
-						NumberAnimation { properties: 'width'; easing.type: Easing.InOutQuad }
-					}
-				}
-				
-				Rectangle {
-					width: hudView.charge * hudView.ammoBarWidth - 6
-					height: hudView.ammoBarHeight * 0.5 - 6
-					radius: 2
-					
-					anchors.right: parent.right
-					anchors.rightMargin: 3
 					anchors.bottom: parent.bottom
-					anchors.bottomMargin: 3
+					anchors.right: parent.right
+					height: hudView.ammoBarWidth
+					width: hudView.ammoBarHeight
+					color: 'transparent'
+					radius: 4
 					
-					border.color: hudView.shadowColor
+					border.color: hudView.getColor(hudView.fuel * 100)
 					border.width: 2
-					color: 'orange'
 					
-					transitions: Transition {
-						NumberAnimation { properties: 'width'; easing.type: Easing.InOutQuad }
+					Rectangle {
+						height: hudView.fuel * hudView.ammoBarWidth - 6
+						width: hudView.ammoBarHeight - 6
+						radius: 2
+						
+						anchors.right: parent.right
+						anchors.rightMargin: 3
+						anchors.bottom: parent.bottom
+						anchors.bottomMargin: 3
+						
+						border.color: hudView.shadowColor
+						border.width: 2
+						color: 'green'
+						
+						transitions: Transition {
+							NumberAnimation { properties: 'width'; easing.type: Easing.InOutQuad }
+						}
+					}
+					
+					Rectangle {
+						height: hudView.charge * hudView.ammoBarWidth - 6
+						width: hudView.ammoBarHeight * 0.5 - 6
+						radius: 2
+						
+						anchors.right: parent.right
+						anchors.rightMargin: 3
+						anchors.bottom: parent.bottom
+						anchors.bottomMargin: 3
+						
+						border.color: hudView.shadowColor
+						border.width: 2
+						color: 'orange'
+						
+						transitions: Transition {
+							NumberAnimation { properties: 'width'; easing.type: Easing.InOutQuad }
+						}
 					}
 				}
 			}
 			
 			HudTextSmall {
+				id: textCharge
 				text: 'Charge'
-				Layout.alignment: Qt.AlignRight
+				horizontalAlignment: Text.AlignRight
+				font.pixelSize: hudView.fontSizeCaption
 			}
 		}
 	}
+	
+	Image {
+		width: hudView.ammoBarHeight
+		height: hudView.ammoBarHeight
+		anchors.centerIn: parent
+		source: 'crosshair121.png'
+		fillMode: Image.PreserveAspectFit
+	}
 }
+
+
+
+
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:720;width:1280}
+}
+ ##^##*/

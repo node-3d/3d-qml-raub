@@ -21,7 +21,7 @@ const {
 addThreeHelpers(three, gl);
 
 const {
-    QmlOverlay, Property, View, loop, release, textureFromId,
+    QmlOverlay, Property, Method, View, loop, release, textureFromId,
 } = initQml({ doc, gl, cwd: __dirname, three });
 
 const icon = new Img(__dirname + '/../qml.png');
@@ -31,16 +31,19 @@ doc.title = 'QML FPS';
 const GRAVITY = 20;
 const NUM_SPHERES = 100;
 const NUM_ENEMIES = 10;
-const SPHERE_RADIUS = 0.2;
-const ENEMY_RADIUS = 2;
-const SPHERE_TTL_SEC = 10;
+const SPHERE_RADIUS = 0.1;
+const ENEMY_RADIUS = 1;
+const TTL_SEC_SPHERE = 10;
+const TTL_SEC_ENEMY = 10;
+const TTL_SEC_EXPLOSION = 0.2;
 const STEPS_PER_FRAME = 5;
-const POS_SPHERE_HIDDEN = new three.Vector3(0, -100, 0);
+const POS_ACTOR_HIDDEN = new three.Vector3(0, -100, 0);
 const POS_PLAYER_START = new three.Vector3(0, 0.35, 0);
 const POS_PLAYER_END = new three.Vector3(0, 1, 0);
-const EXPLOSION_SPEED = 80;
-const SPARK_SIZE = 0.2;
-const SCALE_EXPLOSION_START = new three.Vector3(0.01, 0.01, 0.01);
+const POS_ENEMY_TARGET = new three.Vector3(-2, 0.78, 0);
+// const EXPLOSION_SPEED = 0.1;
+const SPARK_SIZE = 0.1;
+const SCALE_EXPLOSION_START = 0.01;
 const GUN_REFILL_RATE = 0.3;
 const GUN_CHARGE_RATE = 0.7;
 const SPEED_JUMP = 12;
@@ -48,7 +51,7 @@ const LAYER_WORLD = 0;
 const LAYER_GUN = 1;
 
 const sphereGeometry = new three.IcosahedronGeometry(SPHERE_RADIUS, 5);
-const sphereMaterial = new three.MeshLambertMaterial({ color: 0xdede8d });
+const sphereMaterial = new three.MeshStandardMaterial({ color: 0xdede8d, emissive: 0x8ddede, emissiveIntensity: 0.2 });
 
 const worldOctree = new Octree();
 const playerCollider = new Capsule(POS_PLAYER_START.clone(), POS_PLAYER_END.clone(), 0.35);
@@ -82,12 +85,15 @@ const scene = new three.Scene();
 scene.background = new three.Color(0x88ccee);
 scene.fog = new three.Fog(0x88ccee, 0, 50);
 
-// const sceneOverlay = new three.Scene();
-
 const overlay = new QmlOverlay({ file: `${__dirname}/qml/Hud.qml` });
 scene.add(overlay.mesh);
 overlay.mesh.layers.enable(LAYER_GUN);
 overlay.mesh.layers.disable(LAYER_WORLD);
+
+type TMethodFlash = (color: 'red' | 'green') => void;
+const methodHudFlash: TMethodFlash = new Method({
+    view: overlay, name: 'hud', key: 'flashColor',
+});
 
 const gun = new three.Object3D();
 gun.visible = false;
@@ -124,37 +130,41 @@ const explosion: TExplosion = ((): TExplosion => {
     });
     
     const particles = new three.Points(sphereGeometry, material);
-    particles.scale.copy(SCALE_EXPLOSION_START);
-    particles.position.copy(POS_SPHERE_HIDDEN);
+    particles.scale.set(SCALE_EXPLOSION_START, SCALE_EXPLOSION_START, SCALE_EXPLOSION_START);
+    particles.position.copy(POS_ACTOR_HIDDEN);
     particles.visible = false;
     scene.add(particles);
     
-    let isVisible = true;
-    let timeoutExplosion: NodeJS.Timeout | null = null;
+    let ttl = 0;
+    let isVisible = false;
+    // let timeoutExplosion: NodeJS.Timeout | null = null;
     
     const update = (dt: number): void => {
         if (!isVisible) {
             return;
         }
-        const ds = dt * EXPLOSION_SPEED;
-        vector1.set(ds, ds, ds);
-        particles.scale.add(vector1);
+        
+        if (ttl > 0) {
+            ttl = Math.max(0, ttl - dt);
+        }
+        
+        if (ttl === 0) {
+            isVisible = false;
+            particles.position.copy(POS_ACTOR_HIDDEN);
+            particles.visible = false;
+            return;
+        }
+        
+        const ttlFract = ttl / TTL_SEC_EXPLOSION;
+        const t = 1 - ttlFract * ttlFract;
+        const ds = SCALE_EXPLOSION_START + 10 * t;
+        particles.scale.set(ds, ds, ds);
     };
     
     const explode = (pos: three.Vector3): void => {
-        if (timeoutExplosion) {
-            clearTimeout(timeoutExplosion);
-            timeoutExplosion = null;
-        }
+        ttl = TTL_SEC_EXPLOSION;
         isVisible = true;
-        timeoutExplosion = setTimeout(() => {
-            timeoutExplosion = null;
-            isVisible = false;
-            particles.position.copy(POS_SPHERE_HIDDEN);
-            particles.visible = false;
-        }, 120);
-        
-        particles.scale.copy(SCALE_EXPLOSION_START);
+        particles.scale.set(SCALE_EXPLOSION_START, SCALE_EXPLOSION_START, SCALE_EXPLOSION_START);
         particles.position.copy(pos);
         particles.visible = true;
     };
@@ -174,10 +184,6 @@ cameraGun.layers.disable(LAYER_WORLD);
 const camera = new three.PerspectiveCamera(95, doc.w / doc.h, 0.001, 100);
 camera.rotation.order = 'YXZ';
 
-// const hemiLight1 = new three.HemisphereLight(0x8dc1de, 0x00668d, 0.5);
-// hemiLight1.position.set(2, 1, 1);
-// hemiLight1.layers.enable(LAYER_GUN);
-
 const ambientLight1 = new three.AmbientLight(0x88ccee, 1.0);
 scene.add(ambientLight1);
 ambientLight1.layers.enable(LAYER_GUN);
@@ -186,13 +192,6 @@ const fillLight1 = new three.DirectionalLight(0x88ccee, 0.5);
 fillLight1.position.set(5, -25, 1);
 scene.add(fillLight1);
 fillLight1.layers.enable(LAYER_GUN);
-// sceneOverlay.add(fillLight1.clone());
-
-// const fillLight2 = new three.DirectionalLight(0x88ccee, 1.5);
-// fillLight2.position.set(-25, 5, 1);
-// scene.add(fillLight2);
-// fillLight2.layers.disable(LAYER_WORLD);
-// fillLight2.layers.enable(LAYER_GUN);
 
 const directionalLight = new three.DirectionalLight(0xffffff, 2.0);
 directionalLight.position.set(-5, 25, -1);
@@ -209,12 +208,11 @@ directionalLight.shadow.radius = 4;
 directionalLight.shadow.bias = -0.00006;
 scene.add(directionalLight);
 directionalLight.layers.enable(LAYER_GUN);
-// sceneOverlay.add(directionalLight.clone());
 
 type TActor = {
     ttl: number,
     isActive: boolean,
-    mesh: three.Mesh,
+    mesh: three.Object3D,
     collider: three.Sphere,
     velocity: three.Vector3,
     mixer?: three.AnimationMixer | null,
@@ -232,7 +230,7 @@ for (let i = 0; i < NUM_SPHERES; i++) {
         ttl: -1,
         isActive: false,
         mesh: sphere,
-        collider: new three.Sphere(POS_SPHERE_HIDDEN.clone(), SPHERE_RADIUS),
+        collider: new three.Sphere(POS_ACTOR_HIDDEN.clone(), SPHERE_RADIUS),
         velocity: new three.Vector3(),
     });
 }
@@ -252,12 +250,22 @@ const resetPlayer = () => {
     targetRotX = 0;
 };
 
+const resetActor = (actor: TActor) => {
+    actor.mesh.visible = false;
+    actor.isActive = false;
+    actor.ttl = -1;
+    actor.collider.center.copy(POS_ACTOR_HIDDEN);
+};
+
 const resetSpheres = () => {
     for (const sphere of spherePool) {
-        sphere.mesh.visible = false;
-        sphere.isActive = false;
-        sphere.ttl = -1;
-        sphere.collider.center.copy(POS_SPHERE_HIDDEN.clone());
+        resetActor(sphere);
+    }
+};
+
+const resetEnemies = () => {
+    for (const enemy of enemyPool) {
+        resetActor(enemy);
     }
 };
 
@@ -285,8 +293,9 @@ const restartGame = () => {
     resetPlayer();
     mouseTime = 0;
     resetSpheres();
+    resetEnemies();
+    spawnEnemy(1);
     
-    gameScore = 0;
     gunCharge = 0;
     gunFuel = 1;
     health = 100;
@@ -298,6 +307,9 @@ const restartGame = () => {
     propHudHealth.value = health;
     gun.visible = true;
     
+    gameScore = 0;
+    propScore.value = gameScore;
+    
     doc.setPointerCapture();
 };
 
@@ -308,10 +320,18 @@ setInterval(
         }
         propHudCharge.value = gunCharge;
         propHudFuel.value = gunFuel;
-        propHudHealth.value = health;
     },
     100,
 );
+
+const leaveGame = () => {
+    gun.visible = false;
+    propHudScore.value = gameScore;
+    hudState = 'over';
+    propHudMode.value = 'over';
+    propHudHealth.value = 0;
+    doc.releasePointerCapture();
+};
 
 overlay.on('custom-esc', (event) => {
     release();
@@ -328,10 +348,7 @@ overlay.on('custom-esc', (event) => {
         restartGame();
     }
     if (event.button === 'leave') {
-        gun.visible = false;
-        hudState = 'over';
-        propHudMode.value = hudState;
-        doc.releasePointerCapture();
+        leaveGame();
     }
     if (event.button === 'quit') {
         process.exit(0)
@@ -439,7 +456,7 @@ const throwBall = () => {
     
     sphere.mesh.visible = true;
     sphere.isActive = true;
-    sphere.ttl = SPHERE_TTL_SEC;
+    sphere.ttl = TTL_SEC_SPHERE;
     
     camera.getWorldDirection(playerDirection);
     sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
@@ -525,12 +542,7 @@ const playerSphereCollision = (sphere: TActor): void => {
 
 const killEnenmy = (enemy: TActor) => {
     explosion.explode(enemy.collider.center);
-    enemy.isActive = false;
-    enemy.collider.center.copy(POS_SPHERE_HIDDEN);
-    enemy.mesh.visible = false;
-    
-    gameScore += 10;
-    propScore.value = gameScore;
+    resetActor(enemy);
     
     if (!enemyPool.some((enemy) => enemy.isActive)) {
         setTimeout(() => {
@@ -589,6 +601,12 @@ const spheresCollisions = () => {
             
             if (d2 < r2) {
                 killEnenmy(s2);
+                
+                health = Math.min(100, health +1);
+                propHudHealth.value = health;
+                gameScore += 10;
+                propScore.value = gameScore;
+                methodHudFlash('green');
             }
         }
     }
@@ -605,9 +623,7 @@ const updateSpheres = (deltaTime: number) => {
         }
         
         if (sphere.ttl === 0) {
-            sphere.isActive = false;
-            sphere.collider.center.copy(POS_SPHERE_HIDDEN);
-            sphere.mesh.visible = false;
+            resetActor(sphere);
             continue;
         }
         
@@ -637,48 +653,49 @@ const updateSpheres = (deltaTime: number) => {
     }
 };
 
+let difficulty = 1;
 const enemyMovePatterns = [
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0001;
-        collider.center.set(Math.sin(time) * 8, 5, Math.cos(time) * 8);
+        collider.center.set(Math.sin(time) * 18, 15, Math.cos(time) * 8);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0002;
-        collider.center.set(Math.sin(time) * 12, 5.5, 0);
+        collider.center.set(Math.sin(time) * 12, 16, 10);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0003;
-        collider.center.set(Math.cos(time) * 8, 6, Math.sin(time) * 8 + 2 * Math.cos(time));
+        collider.center.set(Math.cos(time) * 18, 19, Math.sin(time) * 8 + 2 * Math.cos(time));
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0001;
-        collider.center.set(0, 11, Math.sin(time) * 12);
+        collider.center.set(0, 21, Math.sin(time) * 50);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0002;
-        collider.center.set(Math.sin(time) * 14, 6.5, Math.cos(time) * 12);
+        collider.center.set(Math.sin(time) * 14, 19, Math.cos(time) * 19);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0003;
-        collider.center.set(Math.sin(time) * 8, 7, Math.cos(time) * 8);
+        collider.center.set(Math.sin(time) * 18, 27, Math.cos(time) * 18);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0001;
-        collider.center.set(Math.sin(time) * 12, 7.5, 6);
+        collider.center.set(Math.sin(time) * 12, 30, 26);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0002;
-        collider.center.set(Math.cos(time) * 8, 8, Math.sin(time) * 14);
+        collider.center.set(Math.cos(time) * 40, 18, Math.sin(time) * 14);
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0003;
-        collider.center.set(0, 8 + 2 * Math.cos(time), Math.sin(time) * 10 + 2 * Math.cos(time));
+        collider.center.set(40, 28 + 10 * Math.cos(time), Math.sin(time) * 10 + 2 * Math.cos(time));
     },
     (collider: three.Sphere) => {
         const time = Date.now() * 0.0001;
-        collider.center.set(Math.sin(time) * 12, 6 + 2 * Math.sin(time), Math.cos(time) * 10);
+        collider.center.set(Math.sin(time) * 22, 26 + 2 * Math.sin(time), Math.cos(time) * 30);
     },
-];
+] as const;
 const enemyMoveCount = enemyMovePatterns.length;
 
 const updateEnemies = (deltaTime: number) => {
@@ -687,12 +704,28 @@ const updateEnemies = (deltaTime: number) => {
         if (!enemy.isActive) {
             continue;
         }
+        if (enemy.ttl > 0) {
+            enemy.ttl = Math.max(0, enemy.ttl - deltaTime * difficulty);
+        }
+        
+        if (enemy.ttl === 0) {
+            resetActor(enemy);
+            continue;
+        }
+        
         enemyMovePatterns[i % enemyMoveCount](enemy.collider);
+        enemy.collider.center.lerp(POS_ENEMY_TARGET, 1 - enemy.ttl / TTL_SEC_ENEMY);
+        if (enemy.collider.distanceToPoint(POS_ENEMY_TARGET) < 0.3) {
+            health = Math.max(0, health - 10);
+            propHudHealth.value = health;
+            methodHudFlash('red');
+            killEnenmy(enemy);
+            continue;
+        }
+        
         enemy.mesh.lookAt(enemy.collider.center);
         enemy.mesh.position.copy(enemy.collider.center);
-        if (enemy.mixer) {
-            enemy.mixer.update(deltaTime);
-        }
+        enemy.mixer?.update(deltaTime);
     }
 };
 
@@ -702,13 +735,16 @@ const spawnEnemy = (rate: number = 0) => {
         return;
     }
     
-    const randEnemy = enemyPool[Math.floor(Math.random() * enemyPool.length)];
+    const randIdx = Math.floor(Math.random() * enemyPool.length);
+    const randEnemy = enemyPool[randIdx];
     if (randEnemy.isActive) {
         return;
     }
     
+    randEnemy.ttl = TTL_SEC_ENEMY;
     randEnemy.isActive = true;
     randEnemy.mesh.visible = true;
+    enemyMovePatterns[randIdx % enemyMoveCount](randEnemy.collider);
 };
 
 const getForwardVector = () => {
@@ -783,6 +819,17 @@ loader.load('collision-world.glb', (gltf) => {
 
 const enemyPool: TActor[] = [];
 
+for (let i = 0; i < NUM_ENEMIES; i++) {
+    enemyPool.push({
+        isActive: false,
+        ttl: -1,
+        mesh: new three.Object3D(),
+        collider: new three.Sphere(POS_ACTOR_HIDDEN.clone(), ENEMY_RADIUS),
+        velocity: new three.Vector3(),
+        mixer: null,
+    });
+}
+
 loader.load('Flamingo.glb', (gltf) => {
     const mesh = gltf.scene.children[0];
     
@@ -790,31 +837,23 @@ loader.load('Flamingo.glb', (gltf) => {
         return;
     }
     
-    const s = 0.02;
+    const s = 0.01;
     mesh.scale.set(s, s, s);
-    mesh.position.copy(POS_SPHERE_HIDDEN);
+    mesh.position.copy(POS_ACTOR_HIDDEN);
     
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     
-    for (let i = 0; i < NUM_ENEMIES; i++) {
+    for (const enemy of enemyPool) {
         const meshClone = mesh.clone();
         scene.add(meshClone);
         
         const mixer = new three.AnimationMixer(meshClone);
         mixer.clipAction(gltf.animations[0]).setDuration(1).play();
         
-        enemyPool.push({
-            isActive: false,
-            ttl: -1,
-            mesh: meshClone,
-            collider: new three.Sphere(POS_SPHERE_HIDDEN.clone(), ENEMY_RADIUS),
-            velocity: new three.Vector3(),
-            mixer,
-        });
+        enemy.mesh = meshClone;
+        enemy.mixer = mixer;
     }
-    
-    spawnEnemy(1);
 });
 
 loader.load('blasterG.glb', (gltf) => {
@@ -858,7 +897,7 @@ loader.load('targetB.glb', (gltf) => {
     
     const s = 3.0;
     mesh.scale.set(s, s, s);
-    mesh.position.set(-2, 0.78, 0);
+    mesh.position.copy(POS_ENEMY_TARGET);
     mesh.rotation.z = Math.PI / 2;
     
     scene.add(mesh);
@@ -875,11 +914,7 @@ const teleportPlayerIfOob = () => {
 
 const animate = () => {
     if (!health && hudState !== 'over') {
-        gun.visible = false;
-        propHudScore.value = gameScore;
-        hudState = 'over';
-        propHudMode.value = 'over';
-        propHudHealth.value = 0;
+        leaveGame();
     }
     
     if (hudState === 'hud') {
@@ -908,7 +943,8 @@ const animate = () => {
         
         explosion.update(deltaTime);
         
-        enemyRate += deltaTime * 0.00001;
+        enemyRate += deltaTime * 0.0001;
+        difficulty += deltaTime * 0.01;
         spawnEnemy();
         
         camera.rotation.y = targetRotY;

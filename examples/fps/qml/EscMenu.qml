@@ -12,20 +12,20 @@ Rectangle {
 		
 		MenuItem {
 			text: 'Resume'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'resume' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'resume' })
 		}
 		
 		MenuItem {
 			text: 'Restart'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'restart' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'restart' })
 		}
 		
 		MenuItem {
 			text: 'Leave'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'leave' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'leave' })
 		}
 	}
 }

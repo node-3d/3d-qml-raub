@@ -12,14 +12,14 @@ Rectangle {
 		
 		MenuItem {
 			text: 'Start'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'start' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'start' })
 		}
 		
 		MenuItem {
 			text: 'Quit'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'quit' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'quit' })
 		}
 	}
 }

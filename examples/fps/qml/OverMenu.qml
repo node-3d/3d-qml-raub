@@ -13,7 +13,9 @@ Rectangle {
 		spacing: 32
 		
 		Item {
-			Layout.alignment: Qt.AlignCenter
+			Layout.alignment: Qt.AlignHCenter
+			width: 512
+			height: 256
 			Score {
 				id: score
 			}
@@ -21,14 +23,14 @@ Rectangle {
 		
 		MenuItem {
 			text: 'Restart'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'restart' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'restart' })
 		}
 		
 		MenuItem {
 			text: 'Quit'
-			Layout.alignment: Qt.AlignCenter
-			onPressed: eventEmit('custom-esc', { button: 'quit' });
+			Layout.alignment: Qt.AlignHCenter
+			onPressed: eventEmit('custom-esc', { button: 'quit' })
 		}
 	}
 }

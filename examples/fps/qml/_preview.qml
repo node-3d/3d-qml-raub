@@ -34,63 +34,91 @@ Window {
 		fuel: sliderFuel.value
 	}
 	
-	ColumnLayout {
-		id: selectModeBox
-		anchors.left: parent.left
-		anchors.leftMargin: 20
-		width: 140
+	RowLayout {
+		x: 20
+		spacing: 20
+		
+		ColumnLayout {
+			width: 140
+			HudTextSmall {
+				text: 'Mode:'
+			}
+			ComboBox {
+				id: selectMode
+				currentIndex: 0
+				model: hudModes.slice()
+				Layout.alignment: Qt.AlignJustify
+			}
+		}
+		
+		ColumnLayout {
+			width: 140
+			HudTextSmall {
+				text: 'Fuel:'
+			}
+			Slider {
+				id: sliderFuel
+				value: 1
+				Layout.alignment: Qt.AlignJustify
+			}
+		}
+		
+		ColumnLayout {
+			width: 140
+			HudTextSmall {
+				text: 'Charge:'
+			}
+			Slider {
+				id: sliderCharge
+				Layout.alignment: Qt.AlignJustify
+			}
+		}
+		
+		ColumnLayout {
+			width: 140
+			HudTextSmall {
+				text: 'HP:'
+			}
+			Slider {
+				id: sliderHp
+				stepSize: 1
+				value: 100
+				maximumValue: 100
+				Layout.alignment: Qt.AlignJustify
+			}
+		}
+		
+		ColumnLayout {
+			width: 140
+			HudTextSmall {
+				text: 'Score:'
+			}
+			Slider {
+				id: sliderScore
+				stepSize: 100
+				value: 0
+				maximumValue: 9999
+				Layout.alignment: Qt.AlignJustify
+			}
+		}
+		
 		HudTextSmall {
-			text: 'Mode:'
+			text: 'Green'
+			color: 'green'
+			MouseArea {
+				anchors.fill: parent
+				onClicked: hud.flashColor('green')
+			}
 		}
-		ComboBox {
-			id: selectMode
-			currentIndex: 0
-			model: hudModes.slice()
-			Layout.alignment: Qt.AlignJustify
+		
+		HudTextSmall {
+			text: 'Red'
+			color: 'red'
+			MouseArea {
+				anchors.fill: parent
+				onClicked: hud.flashColor('red')
+			}
 		}
-	}
-	
-	Slider {
-		id: sliderFuel
-		x: 424
-		y: 0
-		value: 1
-		width: 140
-		anchors.left: selectModeBox.right
-		anchors.leftMargin: 20
-	}
-	
-	Slider {
-		id: sliderCharge
-		x: 636
-		y: 0
-		width: 140
-		anchors.left: sliderFuel.right
-		anchors.leftMargin: 20
-	}
-	
-	Slider {
-		id: sliderHp
-		x: 211
-		y: 0
-		stepSize: 1
-		value: 100
-		maximumValue: 100
-		width: 140
-		anchors.left: sliderCharge.right
-		anchors.leftMargin: 20
-	}
-	
-	Slider {
-		id: sliderScore
-		x: 844
-		y: 0
-		stepSize: 100
-		value: 0
-		maximumValue: 9999
-		width: 140
-		anchors.left: sliderHp.right
-		anchors.leftMargin: 20
 	}
 }
 
