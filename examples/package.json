@@ -6,7 +6,8 @@
 	"scripts": {
 		"dashboard": "npx ts-node-esm qt-dashboard/main.ts",
 		"gui": "npx ts-node-esm gui/main.ts",
-		"fps": "npx ts-node-esm fps/main.ts"
+		"fps": "npx ts-node-esm fps/main.ts",
+		"tree": "npx ts-node-esm tree/main.ts"
 	},
 	"dependencies": {
 		"3d-qml-raub": "file:..",

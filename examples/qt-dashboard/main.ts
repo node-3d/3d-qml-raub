@@ -12,10 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const {
 	doc, Image: Img, gl,
 } = init({
-	isGles3: true,
-	isWebGL2: true,
-	autoEsc: true,
-	autoFullscreen: true,
+	isGles3: true, isWebGL2: true, autoEsc: true,
 });
 
 addThreeHelpers(three, gl);
@@ -34,7 +31,6 @@ cameraPerspective.position.z = 9;
 const renderer = new three.WebGLRenderer();
 renderer.setPixelRatio(doc.devicePixelRatio);
 renderer.setSize(doc.w, doc.h);
-// renderer.debug.checkShaderErrors = false;
 
 doc.on('resize', () => {
 	cameraPerspective.aspect = doc.w / doc.h;

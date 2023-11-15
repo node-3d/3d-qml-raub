@@ -16,12 +16,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const {
 	doc, Image: Img, gl, glfw,
-} = init({ isGles3: true, isWebGL2: true, mode: 'borderless', vsync: true });
+} = init({
+	isGles3: true, isWebGL2: true, mode: 'borderless',
+});
 
 addThreeHelpers(three, gl);
 
 const {
-    QmlOverlay, Property, Method, View, loop, release, textureFromId,
+	QmlOverlay, Property, Method, View, loop, release, textureFromId,
 } = initQml({ doc, gl, cwd: __dirname, three });
 
 const icon = new Img(__dirname + '/../qml.png');
@@ -92,7 +94,7 @@ overlay.mesh.layers.disable(LAYER_WORLD);
 
 type TMethodFlash = (color: 'red' | 'green') => void;
 const methodHudFlash: TMethodFlash = new Method({
-    view: overlay, name: 'hud', key: 'flashColor',
+	view: overlay, name: 'hud', key: 'flashColor',
 });
 
 const gun = new three.Object3D();
@@ -105,8 +107,8 @@ const scoreView = new View({ file: `${__dirname}/qml/Score.qml` });
 const materialScore = new three.SpriteMaterial();
 materialScore.map = textureFromId(scoreView.textureId, renderer);
 scoreView.on('reset', (textureId) => {
-    release();
-    materialScore.map = textureFromId(textureId, renderer);
+	release();
+	materialScore.map = textureFromId(textureId, renderer);
 });
 
 const spriteScore = new three.Sprite(materialScore);
@@ -115,64 +117,64 @@ spriteScore.scale.set(5, 5, 1);
 scene.add(spriteScore);
 
 const propScore = new Property<number>({
-    view: scoreView, name: 'score', key: 'score', value: gameScore,
+	view: scoreView, name: 'score', key: 'score', value: gameScore,
 });
 
 type TExplosion = {
-    update: (dt: number) => void;
-    explode: (pos: three.Vector3) => void;
+	update: (dt: number) => void;
+	explode: (pos: three.Vector3) => void;
 };
 
 const explosion: TExplosion = ((): TExplosion => {
-    const material = new three.PointsMaterial({
-        size: SPARK_SIZE,
-        color: 0xFF000F,
-    });
-    
-    const particles = new three.Points(sphereGeometry, material);
-    particles.scale.set(SCALE_EXPLOSION_START, SCALE_EXPLOSION_START, SCALE_EXPLOSION_START);
-    particles.position.copy(POS_ACTOR_HIDDEN);
-    particles.visible = false;
-    scene.add(particles);
-    
-    let ttl = 0;
-    let isVisible = false;
-    // let timeoutExplosion: NodeJS.Timeout | null = null;
-    
-    const update = (dt: number): void => {
-        if (!isVisible) {
-            return;
-        }
-        
-        if (ttl > 0) {
-            ttl = Math.max(0, ttl - dt);
-        }
-        
-        if (ttl === 0) {
-            isVisible = false;
-            particles.position.copy(POS_ACTOR_HIDDEN);
-            particles.visible = false;
-            return;
-        }
-        
-        const ttlFract = ttl / TTL_SEC_EXPLOSION;
-        const t = 1 - ttlFract * ttlFract;
-        const ds = SCALE_EXPLOSION_START + 10 * t;
-        particles.scale.set(ds, ds, ds);
-    };
-    
-    const explode = (pos: three.Vector3): void => {
-        ttl = TTL_SEC_EXPLOSION;
-        isVisible = true;
-        particles.scale.set(SCALE_EXPLOSION_START, SCALE_EXPLOSION_START, SCALE_EXPLOSION_START);
-        particles.position.copy(pos);
-        particles.visible = true;
-    };
-    
-    return {
-        update,
-        explode,
-    };
+	const material = new three.PointsMaterial({
+		size: SPARK_SIZE,
+		color: 0xFF000F,
+	});
+	
+	const particles = new three.Points(sphereGeometry, material);
+	particles.scale.set(SCALE_EXPLOSION_START, SCALE_EXPLOSION_START, SCALE_EXPLOSION_START);
+	particles.position.copy(POS_ACTOR_HIDDEN);
+	particles.visible = false;
+	scene.add(particles);
+	
+	let ttl = 0;
+	let isVisible = false;
+	// let timeoutExplosion: NodeJS.Timeout | null = null;
+	
+	const update = (dt: number): void => {
+		if (!isVisible) {
+			return;
+		}
+		
+		if (ttl > 0) {
+			ttl = Math.max(0, ttl - dt);
+		}
+		
+		if (ttl === 0) {
+			isVisible = false;
+			particles.position.copy(POS_ACTOR_HIDDEN);
+			particles.visible = false;
+			return;
+		}
+		
+		const ttlFract = ttl / TTL_SEC_EXPLOSION;
+		const t = 1 - ttlFract * ttlFract;
+		const ds = SCALE_EXPLOSION_START + 10 * t;
+		particles.scale.set(ds, ds, ds);
+	};
+	
+	const explode = (pos: three.Vector3): void => {
+		ttl = TTL_SEC_EXPLOSION;
+		isVisible = true;
+		particles.scale.set(SCALE_EXPLOSION_START, SCALE_EXPLOSION_START, SCALE_EXPLOSION_START);
+		particles.position.copy(pos);
+		particles.visible = true;
+	};
+	
+	return {
+		update,
+		explode,
+	};
 })();
 
 
@@ -210,194 +212,194 @@ scene.add(directionalLight);
 directionalLight.layers.enable(LAYER_GUN);
 
 type TActor = {
-    ttl: number,
-    isActive: boolean,
-    mesh: three.Object3D,
-    collider: three.Sphere,
-    velocity: three.Vector3,
-    mixer?: three.AnimationMixer | null,
+	ttl: number,
+	isActive: boolean,
+	mesh: three.Object3D,
+	collider: three.Sphere,
+	velocity: three.Vector3,
+	mixer?: three.AnimationMixer | null,
 };
 const spherePool: TActor[] = [];
 
 for (let i = 0; i < NUM_SPHERES; i++) {
-    const sphere = new three.Mesh(sphereGeometry, sphereMaterial);
-    sphere.castShadow = true;
-    sphere.receiveShadow = true;
-    
-    scene.add(sphere);
-    
-    spherePool.push({
-        ttl: -1,
-        isActive: false,
-        mesh: sphere,
-        collider: new three.Sphere(POS_ACTOR_HIDDEN.clone(), SPHERE_RADIUS),
-        velocity: new three.Vector3(),
-    });
+	const sphere = new three.Mesh(sphereGeometry, sphereMaterial);
+	sphere.castShadow = true;
+	sphere.receiveShadow = true;
+	
+	scene.add(sphere);
+	
+	spherePool.push({
+		ttl: -1,
+		isActive: false,
+		mesh: sphere,
+		collider: new three.Sphere(POS_ACTOR_HIDDEN.clone(), SPHERE_RADIUS),
+		velocity: new three.Vector3(),
+	});
 }
 
 const resetPlayer = () => {
-    playerVelocity.set(0, 0, 0);
-    playerDirection.set(0, 0, 0);
-    playerCollider.start.copy(POS_PLAYER_START);
-    playerCollider.end.copy(POS_PLAYER_END);
-    playerCollider.radius = 0.35;
-    camera.position.copy(playerCollider.end);
-    camera.rotation.set(0, 0, 0);
-    cameraGun.position.copy(playerCollider.end);
-    cameraGun.rotation.set(0, 0, 0);
-    playerOnFloor = false;
-    targetRotY = 0;
-    targetRotX = 0;
+	playerVelocity.set(0, 0, 0);
+	playerDirection.set(0, 0, 0);
+	playerCollider.start.copy(POS_PLAYER_START);
+	playerCollider.end.copy(POS_PLAYER_END);
+	playerCollider.radius = 0.35;
+	camera.position.copy(playerCollider.end);
+	camera.rotation.set(0, 0, 0);
+	cameraGun.position.copy(playerCollider.end);
+	cameraGun.rotation.set(0, 0, 0);
+	playerOnFloor = false;
+	targetRotY = 0;
+	targetRotX = 0;
 };
 
 const resetActor = (actor: TActor) => {
-    actor.mesh.visible = false;
-    actor.isActive = false;
-    actor.ttl = -1;
-    actor.collider.center.copy(POS_ACTOR_HIDDEN);
+	actor.mesh.visible = false;
+	actor.isActive = false;
+	actor.ttl = -1;
+	actor.collider.center.copy(POS_ACTOR_HIDDEN);
 };
 
 const resetSpheres = () => {
-    for (const sphere of spherePool) {
-        resetActor(sphere);
-    }
+	for (const sphere of spherePool) {
+		resetActor(sphere);
+	}
 };
 
 const resetEnemies = () => {
-    for (const enemy of enemyPool) {
-        resetActor(enemy);
-    }
+	for (const enemy of enemyPool) {
+		resetActor(enemy);
+	}
 };
 
 const propHudMode = new Property<THudState>({
-    view: overlay, name: 'hud', key: 'mode',
+	view: overlay, name: 'hud', key: 'mode',
 });
 
 const propHudCharge = new Property<number>({
-    view: overlay, name: 'hud', key: 'charge',
+	view: overlay, name: 'hud', key: 'charge',
 });
 
 const propHudFuel = new Property<number>({
-    view: overlay, name: 'hud', key: 'fuel',
+	view: overlay, name: 'hud', key: 'fuel',
 });
 
 const propHudScore = new Property<number>({
-    view: overlay, name: 'hud', key: 'score',
+	view: overlay, name: 'hud', key: 'score',
 });
 
 const propHudHealth = new Property<number>({
-    view: overlay, name: 'hud', key: 'hp',
+	view: overlay, name: 'hud', key: 'hp',
 });
 
 const restartGame = () => {
-    resetPlayer();
-    mouseTime = 0;
-    resetSpheres();
-    resetEnemies();
-    spawnEnemy(1);
-    
-    gunCharge = 0;
-    gunFuel = 1;
-    health = 100;
-    hudState = 'hud';
-    propHudMode.value = 'hud';
-    
-    propHudCharge.value = gunCharge;
-    propHudFuel.value = gunFuel;
-    propHudHealth.value = health;
-    gun.visible = true;
-    
-    gameScore = 0;
-    propScore.value = gameScore;
-    
-    doc.setPointerCapture();
+	resetPlayer();
+	mouseTime = 0;
+	resetSpheres();
+	resetEnemies();
+	spawnEnemy(1);
+	
+	gunCharge = 0;
+	gunFuel = 1;
+	health = 100;
+	hudState = 'hud';
+	propHudMode.value = 'hud';
+	
+	propHudCharge.value = gunCharge;
+	propHudFuel.value = gunFuel;
+	propHudHealth.value = health;
+	gun.visible = true;
+	
+	gameScore = 0;
+	propScore.value = gameScore;
+	
+	doc.setPointerCapture();
 };
 
 setInterval(
-    () => {
-        if (hudState !== 'hud') {
-            return;
-        }
-        propHudCharge.value = gunCharge;
-        propHudFuel.value = gunFuel;
-    },
-    100,
+	() => {
+		if (hudState !== 'hud') {
+			return;
+		}
+		propHudCharge.value = gunCharge;
+		propHudFuel.value = gunFuel;
+	},
+	100,
 );
 
 const leaveGame = () => {
-    gun.visible = false;
-    propHudScore.value = gameScore;
-    hudState = 'over';
-    propHudMode.value = 'over';
-    propHudHealth.value = 0;
-    doc.releasePointerCapture();
+	gun.visible = false;
+	propHudScore.value = gameScore;
+	hudState = 'over';
+	propHudMode.value = 'over';
+	propHudHealth.value = 0;
+	doc.releasePointerCapture();
 };
 
 overlay.on('custom-esc', (event) => {
-    release();
-    if (event.button === 'resume') {
-        mouseTime = 0;
-        hudState = 'hud';
-        propHudMode.value = hudState;
-        doc.setPointerCapture();
-    }
-    if (event.button === 'start') {
-        restartGame();
-    }
-    if (event.button === 'restart') {
-        restartGame();
-    }
-    if (event.button === 'leave') {
-        leaveGame();
-    }
-    if (event.button === 'quit') {
-        process.exit(0)
-    }
+	release();
+	if (event.button === 'resume') {
+		mouseTime = 0;
+		hudState = 'hud';
+		propHudMode.value = hudState;
+		doc.setPointerCapture();
+	}
+	if (event.button === 'start') {
+		restartGame();
+	}
+	if (event.button === 'restart') {
+		restartGame();
+	}
+	if (event.button === 'leave') {
+		leaveGame();
+	}
+	if (event.button === 'quit') {
+		process.exit(0)
+	}
 });
 
 
 doc.on('keydown', (e) => {
-    release();
-    if (hudState !== 'hud') {
-        return;
-    }
-    keyStates[e['keyCode']] = true;
+	release();
+	if (hudState !== 'hud') {
+		return;
+	}
+	keyStates[e['keyCode']] = true;
 });
 
 
 doc.on('keyup', (e) => {
-    release();
-    keyStates[e['keyCode']] = false;
-    if (e['keyCode'] === glfw.extraCodes[glfw.KEY_ESCAPE]) {
-        if (hudState !== 'hud' && hudState !== 'esc') {
-            return;
-        }
-        hudState = hudState === 'hud' ? 'esc' : 'hud';
-        if (hudState === 'hud') {
-            doc.setPointerCapture();
-        } else {
-            doc.releasePointerCapture();
-        }
-        propHudMode.value = hudState;
-    }
+	release();
+	keyStates[e['keyCode']] = false;
+	if (e['keyCode'] === glfw.extraCodes[glfw.KEY_ESCAPE]) {
+		if (hudState !== 'hud' && hudState !== 'esc') {
+			return;
+		}
+		hudState = hudState === 'hud' ? 'esc' : 'hud';
+		if (hudState === 'hud') {
+			doc.setPointerCapture();
+		} else {
+			doc.releasePointerCapture();
+		}
+		propHudMode.value = hudState;
+	}
 });
 
 
 doc.on('mousedown', () => {
-    if (hudState !== 'hud') {
-        return;
-    }
-    release();
-    mouseTime = Date.now();
+	if (hudState !== 'hud') {
+		return;
+	}
+	release();
+	mouseTime = Date.now();
 });
 
 
 doc.on('mouseup', () => {
-    if (hudState !== 'hud') {
-        return;
-    }
-    release();
-    throwBall();
+	if (hudState !== 'hud') {
+		return;
+	}
+	release();
+	throwBall();
 });
 
 const pitchLimitRad: number = Math.PI * 0.5 - 0.05;
@@ -405,570 +407,568 @@ let targetRotY: number = camera.rotation.y;
 let targetRotX: number = camera.rotation.x;
 
 doc.on('mousemove', (event) => {
-    if (hudState !== 'hud') {
-        return;
-    }
-    release();
-    
-    const newYaw: number = targetRotY - event['movementX'] * 0.001;
-    const newPitch: number = targetRotX - event['movementY'] * 0.001;
-    
-    targetRotY = newYaw;
-    targetRotX = Math.min(pitchLimitRad, Math.max(-pitchLimitRad, newPitch));
+	if (hudState !== 'hud') {
+		return;
+	}
+	release();
+	
+	const newYaw: number = targetRotY - event['movementX'] * 0.001;
+	const newPitch: number = targetRotX - event['movementY'] * 0.001;
+	
+	targetRotY = newYaw;
+	targetRotX = Math.min(pitchLimitRad, Math.max(-pitchLimitRad, newPitch));
 });
 
 doc.on('resize', () => {
-    release();
-    camera.aspect = doc.w / doc.h;
-    camera.updateProjectionMatrix();
-    cameraGun.aspect = doc.w / doc.h;
-    cameraGun.updateProjectionMatrix();
-    renderer.setSize(doc.w, doc.h);
+	release();
+	camera.aspect = doc.w / doc.h;
+	camera.updateProjectionMatrix();
+	cameraGun.aspect = doc.w / doc.h;
+	cameraGun.updateProjectionMatrix();
+	renderer.setSize(doc.w, doc.h);
 });
 
 
 const gunOffset = new three.Vector3();
 const updateGunOffset = (vel: three.Vector3, dt: number) => {
-    vector1.copy(vel);
-    vector1.y = 0;
-    
-    if (vector1.lengthSq() < 1) {
-        vector2.set(0, 0, 0);
-    } else {
-        const time = Date.now();
-        const swingX = 0.0010 * Math.cos(time * 0.007);
-        const swingY = 0.0005 * Math.sin(time * 0.014);
-        vector2.set(swingX, swingY, 0);
-    }
-    
-    gunOffset.lerp(vector2.addScaledVector(vel, -0.0001), 2 * dt);
+	vector1.copy(vel);
+	vector1.y = 0;
+	
+	if (vector1.lengthSq() < 1) {
+		vector2.set(0, 0, 0);
+	} else {
+		const time = Date.now();
+		const swingX = 0.0010 * Math.cos(time * 0.007);
+		const swingY = 0.0005 * Math.sin(time * 0.014);
+		vector2.set(swingX, swingY, 0);
+	}
+	
+	gunOffset.lerp(vector2.addScaledVector(vel, -0.0001), 2 * dt);
 };
 
 const throwBall = () => {
-    if (!mouseTime) {
-        return;
-    }
-    
-    const sphere = spherePool.find((sphere) => !sphere.isActive);
-    if (!sphere) {
-        return;
-    }
-    
-    sphere.mesh.visible = true;
-    sphere.isActive = true;
-    sphere.ttl = TTL_SEC_SPHERE;
-    
-    camera.getWorldDirection(playerDirection);
-    sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
-    
-    vector1.copy(playerDirection);
-    vector1.multiplyScalar(-0.001 * gunCharge);
-    gunOffset.add(vector1);
-    
-    // throw the ball with more force if we hold the button longer, and if we move forward
-    const impulse = 5 + 50 * gunCharge;
-    mouseTime = 0;
-    gunCharge = 0;
-    
-    sphere.velocity.copy(playerDirection).multiplyScalar(impulse);
-    sphere.velocity.addScaledVector(playerVelocity, 2);
+	if (!mouseTime) {
+		return;
+	}
+	
+	const sphere = spherePool.find((sphere) => !sphere.isActive);
+	if (!sphere) {
+		return;
+	}
+	
+	sphere.mesh.visible = true;
+	sphere.isActive = true;
+	sphere.ttl = TTL_SEC_SPHERE;
+	
+	camera.getWorldDirection(playerDirection);
+	sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
+	
+	vector1.copy(playerDirection);
+	vector1.multiplyScalar(-0.0015 * gunCharge);
+	gunOffset.add(vector1);
+	
+	// throw the ball with more force if we hold the button longer, and if we move forward
+	const impulse = 10 + 50 * gunCharge;
+	mouseTime = 0;
+	gunCharge = 0;
+	
+	sphere.velocity.copy(playerDirection).multiplyScalar(impulse);
+	sphere.velocity.addScaledVector(playerVelocity, 2);
 };
 
 
 const playerCollisions = () => {
-    const result = worldOctree.capsuleIntersect(playerCollider);
-    
-    playerOnFloor = false;
-    
-    if (result) {
-        playerOnFloor = result.normal.y > 0;
-        
-        if (!playerOnFloor) {
-            playerVelocity.addScaledVector(result.normal, - result.normal.dot(playerVelocity));
-        }
-        
-        playerCollider.translate(result.normal.multiplyScalar(result.depth));
-    }
+	const result = worldOctree.capsuleIntersect(playerCollider);
+	
+	playerOnFloor = false;
+	
+	if (result) {
+		playerOnFloor = result.normal.y > 0;
+		
+		if (!playerOnFloor) {
+			playerVelocity.addScaledVector(result.normal, - result.normal.dot(playerVelocity));
+		}
+		
+		playerCollider.translate(result.normal.multiplyScalar(result.depth));
+	}
 };
 
 
 const updatePlayer = (deltaTime: number) => {
-    let damping = Math.exp(-4 * deltaTime) - 1;
-    
-    if (!playerOnFloor) {
-        playerVelocity.y -= GRAVITY * deltaTime;
-        // small air resistance
-        damping *= 0.1;
-    }
-    
-    playerVelocity.addScaledVector(playerVelocity, damping);
-    
-    const deltaPosition = playerVelocity.clone().multiplyScalar(deltaTime);
-    playerCollider.translate(deltaPosition);
-    
-    playerCollisions();
-    
-    camera.position.copy(playerCollider.end);
-    // gun.position.copy(playerCollider.end);
-    // gun.rotation.copy(camera.rotation);
+	let damping = Math.exp(-4 * deltaTime) - 1;
+	
+	if (!playerOnFloor) {
+		playerVelocity.y -= GRAVITY * deltaTime;
+		// small air resistance
+		damping *= 0.1;
+	}
+	
+	playerVelocity.addScaledVector(playerVelocity, damping);
+	
+	const deltaPosition = playerVelocity.clone().multiplyScalar(deltaTime);
+	playerCollider.translate(deltaPosition);
+	
+	playerCollisions();
+	
+	camera.position.copy(playerCollider.end);
 };
 
 
 const playerSphereCollision = (sphere: TActor): void => {
-    const center = vector1.addVectors(playerCollider.start, playerCollider.end).multiplyScalar(0.5);
-    const sphere_center = sphere.collider.center;
-    const r = playerCollider.radius + sphere.collider.radius;
-    const r2 = r * r;
-    
-    // approximation: player = 3 spherePool
-    
-    for (const point of [playerCollider.start, playerCollider.end, center]) {
-        const d2 = point.distanceToSquared(sphere_center);
-        
-        if ( d2 < r2 ) {
-            const normal = vector1.subVectors(point, sphere_center).normalize();
-            const v1 = vector2.copy(normal).multiplyScalar(normal.dot(playerVelocity));
-            const v2 = vector3.copy(normal).multiplyScalar(normal.dot(sphere.velocity));
-            
-            playerVelocity.add(v2).sub(v1);
-            sphere.velocity.add(v1).sub(v2);
-            
-            const d = (r - Math.sqrt(d2)) / 2;
-            sphere_center.addScaledVector(normal, -d);
-        }
-    }
+	const center = vector1.addVectors(playerCollider.start, playerCollider.end).multiplyScalar(0.5);
+	const sphere_center = sphere.collider.center;
+	const r = playerCollider.radius + sphere.collider.radius;
+	const r2 = r * r;
+	
+	// approximation: player = 3 spherePool
+	
+	for (const point of [playerCollider.start, playerCollider.end, center]) {
+		const d2 = point.distanceToSquared(sphere_center);
+		
+		if ( d2 < r2 ) {
+			const normal = vector1.subVectors(point, sphere_center).normalize();
+			const v1 = vector2.copy(normal).multiplyScalar(normal.dot(playerVelocity));
+			const v2 = vector3.copy(normal).multiplyScalar(normal.dot(sphere.velocity));
+			
+			playerVelocity.add(v2).sub(v1);
+			sphere.velocity.add(v1).sub(v2);
+			
+			const d = (r - Math.sqrt(d2)) / 2;
+			sphere_center.addScaledVector(normal, -d);
+		}
+	}
 };
 
 
 const killEnenmy = (enemy: TActor) => {
-    explosion.explode(enemy.collider.center);
-    resetActor(enemy);
-    
-    if (!enemyPool.some((enemy) => enemy.isActive)) {
-        setTimeout(() => {
-            spawnEnemy(1);
-        }, 4000);
-    }
+	explosion.explode(enemy.collider.center);
+	resetActor(enemy);
+	
+	if (!enemyPool.some((enemy) => enemy.isActive)) {
+		setTimeout(() => {
+			spawnEnemy(1);
+		}, 4000);
+	}
 };
 
 
 const spheresCollisions = () => {
-    const spherePoolSize = spherePool.length;
-    const enemyPoolSize = enemyPool.length;
-    
-    for (let i = 0; i < spherePoolSize; i++) {
-        const s1 = spherePool[i];
-        if (!s1.isActive) {
-            continue;
-        }
-        
-        // Sphere vs Sphere
-        for (let j = i + 1; j < spherePoolSize; j++) {
-            const s2 = spherePool[j];
-            if (!s2.isActive) {
-                continue;
-            }
-            
-            const d2 = s1.collider.center.distanceToSquared(s2.collider.center);
-            const r = s1.collider.radius + s2.collider.radius;
-            const r2 = r * r;
-            
-            if (d2 < r2) {
-                const normal = vector1.subVectors(s1.collider.center, s2.collider.center).normalize();
-                const v1 = vector2.copy(normal).multiplyScalar(normal.dot(s1.velocity));
-                const v2 = vector3.copy(normal).multiplyScalar(normal.dot(s2.velocity));
-                
-                s1.velocity.add(v2).sub(v1);
-                s2.velocity.add(v1).sub(v2);
-                
-                const d = (r - Math.sqrt(d2)) / 2;
-                
-                s1.collider.center.addScaledVector(normal, d);
-                s2.collider.center.addScaledVector(normal, -d);
-            }
-        }
-        
-        // Sphere vs Enemy
-        for (let j = 0; j < enemyPoolSize; j++) {
-            const s2 = enemyPool[j];
-            if (!s2.isActive) {
-                continue;
-            }
-            
-            const d2 = s1.collider.center.distanceToSquared(s2.collider.center);
-            const r = s1.collider.radius + s2.collider.radius;
-            const r2 = r * r;
-            
-            if (d2 < r2) {
-                killEnenmy(s2);
-                
-                health = Math.min(100, health +1);
-                propHudHealth.value = health;
-                gameScore += 10;
-                propScore.value = gameScore;
-                methodHudFlash('green');
-            }
-        }
-    }
+	const spherePoolSize = spherePool.length;
+	const enemyPoolSize = enemyPool.length;
+	
+	for (let i = 0; i < spherePoolSize; i++) {
+		const s1 = spherePool[i];
+		if (!s1.isActive) {
+			continue;
+		}
+		
+		// Sphere vs Sphere
+		for (let j = i + 1; j < spherePoolSize; j++) {
+			const s2 = spherePool[j];
+			if (!s2.isActive) {
+				continue;
+			}
+			
+			const d2 = s1.collider.center.distanceToSquared(s2.collider.center);
+			const r = s1.collider.radius + s2.collider.radius;
+			const r2 = r * r;
+			
+			if (d2 < r2) {
+				const normal = vector1.subVectors(s1.collider.center, s2.collider.center).normalize();
+				const v1 = vector2.copy(normal).multiplyScalar(normal.dot(s1.velocity));
+				const v2 = vector3.copy(normal).multiplyScalar(normal.dot(s2.velocity));
+				
+				s1.velocity.add(v2).sub(v1);
+				s2.velocity.add(v1).sub(v2);
+				
+				const d = (r - Math.sqrt(d2)) / 2;
+				
+				s1.collider.center.addScaledVector(normal, d);
+				s2.collider.center.addScaledVector(normal, -d);
+			}
+		}
+		
+		// Sphere vs Enemy
+		for (let j = 0; j < enemyPoolSize; j++) {
+			const s2 = enemyPool[j];
+			if (!s2.isActive) {
+				continue;
+			}
+			
+			const d2 = s1.collider.center.distanceToSquared(s2.collider.center);
+			const r = s1.collider.radius + s2.collider.radius;
+			const r2 = r * r;
+			
+			if (d2 < r2) {
+				killEnenmy(s2);
+				
+				health = Math.min(100, health +1);
+				propHudHealth.value = health;
+				gameScore += 10;
+				propScore.value = gameScore;
+				methodHudFlash('green');
+			}
+		}
+	}
 };
 
 
 const updateSpheres = (deltaTime: number) => {
-    for (const sphere of spherePool) {
-        if (!sphere.isActive) {
-            continue;
-        }
-        if (sphere.ttl > 0) {
-            sphere.ttl = Math.max(0, sphere.ttl - deltaTime);
-        }
-        
-        if (sphere.ttl === 0) {
-            resetActor(sphere);
-            continue;
-        }
-        
-        sphere.collider.center.addScaledVector(sphere.velocity, deltaTime);
-        
-        const result = worldOctree.sphereIntersect(sphere.collider);
-        
-        if (result) {
-            sphere.velocity.addScaledVector(result.normal, - result.normal.dot(sphere.velocity) * 1.5);
-            sphere.collider.center.add(result.normal.multiplyScalar(result.depth));
-        } else {
-            sphere.velocity.y -= GRAVITY * deltaTime;
-        }
-        
-        const damping = Math.exp(-1.5 * deltaTime) - 1;
-        sphere.velocity.addScaledVector(sphere.velocity, damping);
-        
-        playerSphereCollision(sphere);
-    }
-    
-    spheresCollisions();
-    
-    for (const sphere of spherePool) {
-        if (sphere.isActive) {
-            sphere.mesh.position.copy(sphere.collider.center);
-        }
-    }
+	for (const sphere of spherePool) {
+		if (!sphere.isActive) {
+			continue;
+		}
+		if (sphere.ttl > 0) {
+			sphere.ttl = Math.max(0, sphere.ttl - deltaTime);
+		}
+		
+		if (sphere.ttl === 0) {
+			resetActor(sphere);
+			continue;
+		}
+		
+		sphere.collider.center.addScaledVector(sphere.velocity, deltaTime);
+		
+		const result = worldOctree.sphereIntersect(sphere.collider);
+		
+		if (result) {
+			sphere.velocity.addScaledVector(result.normal, - result.normal.dot(sphere.velocity) * 1.5);
+			sphere.collider.center.add(result.normal.multiplyScalar(result.depth));
+		} else {
+			sphere.velocity.y -= GRAVITY * deltaTime;
+		}
+		
+		const damping = Math.exp(-1.5 * deltaTime) - 1;
+		sphere.velocity.addScaledVector(sphere.velocity, damping);
+		
+		playerSphereCollision(sphere);
+	}
+	
+	spheresCollisions();
+	
+	for (const sphere of spherePool) {
+		if (sphere.isActive) {
+			sphere.mesh.position.copy(sphere.collider.center);
+		}
+	}
 };
 
 let difficulty = 1;
 const enemyMovePatterns = [
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0001;
-        collider.center.set(Math.sin(time) * 18, 15, Math.cos(time) * 8);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0002;
-        collider.center.set(Math.sin(time) * 12, 16, 10);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0003;
-        collider.center.set(Math.cos(time) * 18, 19, Math.sin(time) * 8 + 2 * Math.cos(time));
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0001;
-        collider.center.set(0, 21, Math.sin(time) * 50);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0002;
-        collider.center.set(Math.sin(time) * 14, 19, Math.cos(time) * 19);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0003;
-        collider.center.set(Math.sin(time) * 18, 27, Math.cos(time) * 18);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0001;
-        collider.center.set(Math.sin(time) * 12, 30, 26);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0002;
-        collider.center.set(Math.cos(time) * 40, 18, Math.sin(time) * 14);
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0003;
-        collider.center.set(40, 28 + 10 * Math.cos(time), Math.sin(time) * 10 + 2 * Math.cos(time));
-    },
-    (collider: three.Sphere) => {
-        const time = Date.now() * 0.0001;
-        collider.center.set(Math.sin(time) * 22, 26 + 2 * Math.sin(time), Math.cos(time) * 30);
-    },
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0001;
+		collider.center.set(Math.sin(time) * 18, 15, Math.cos(time) * 8);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0002;
+		collider.center.set(Math.sin(time) * 12, 16, 10);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0003;
+		collider.center.set(Math.cos(time) * 18, 19, Math.sin(time) * 8 + 2 * Math.cos(time));
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0001;
+		collider.center.set(0, 21, Math.sin(time) * 50);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0002;
+		collider.center.set(Math.sin(time) * 14, 19, Math.cos(time) * 19);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0003;
+		collider.center.set(Math.sin(time) * 18, 27, Math.cos(time) * 18);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0001;
+		collider.center.set(Math.sin(time) * 12, 30, 26);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0002;
+		collider.center.set(Math.cos(time) * 40, 18, Math.sin(time) * 14);
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0003;
+		collider.center.set(40, 28 + 10 * Math.cos(time), Math.sin(time) * 10 + 2 * Math.cos(time));
+	},
+	(collider: three.Sphere) => {
+		const time = Date.now() * 0.0001;
+		collider.center.set(Math.sin(time) * 22, 26 + 2 * Math.sin(time), Math.cos(time) * 30);
+	},
 ] as const;
 const enemyMoveCount = enemyMovePatterns.length;
 
 const updateEnemies = (deltaTime: number) => {
-    for (let i = 0; i < NUM_ENEMIES; i++) {
-        const enemy: TActor = enemyPool[i];
-        if (!enemy.isActive) {
-            continue;
-        }
-        if (enemy.ttl > 0) {
-            enemy.ttl = Math.max(0, enemy.ttl - deltaTime * difficulty);
-        }
-        
-        if (enemy.ttl === 0) {
-            resetActor(enemy);
-            continue;
-        }
-        
-        enemyMovePatterns[i % enemyMoveCount](enemy.collider);
-        enemy.collider.center.lerp(POS_ENEMY_TARGET, 1 - enemy.ttl / TTL_SEC_ENEMY);
-        if (enemy.collider.distanceToPoint(POS_ENEMY_TARGET) < 0.3) {
-            health = Math.max(0, health - 10);
-            propHudHealth.value = health;
-            methodHudFlash('red');
-            killEnenmy(enemy);
-            continue;
-        }
-        
-        enemy.mesh.lookAt(enemy.collider.center);
-        enemy.mesh.position.copy(enemy.collider.center);
-        enemy.mixer?.update(deltaTime);
-    }
+	for (let i = 0; i < NUM_ENEMIES; i++) {
+		const enemy: TActor = enemyPool[i];
+		if (!enemy.isActive) {
+			continue;
+		}
+		if (enemy.ttl > 0) {
+			enemy.ttl = Math.max(0, enemy.ttl - deltaTime * difficulty);
+		}
+		
+		if (enemy.ttl === 0) {
+			resetActor(enemy);
+			continue;
+		}
+		
+		enemyMovePatterns[i % enemyMoveCount](enemy.collider);
+		enemy.collider.center.lerp(POS_ENEMY_TARGET, 1 - enemy.ttl / TTL_SEC_ENEMY);
+		if (enemy.collider.distanceToPoint(POS_ENEMY_TARGET) < 0.3) {
+			health = Math.max(0, health - 10);
+			propHudHealth.value = health;
+			methodHudFlash('red');
+			killEnenmy(enemy);
+			continue;
+		}
+		
+		enemy.mesh.lookAt(enemy.collider.center);
+		enemy.mesh.position.copy(enemy.collider.center);
+		enemy.mixer?.update(deltaTime);
+	}
 };
 
 let enemyRate = 0.0005;
 const spawnEnemy = (rate: number = 0) => {
-    if (Math.random() > (rate || enemyRate)) {
-        return;
-    }
-    
-    const randIdx = Math.floor(Math.random() * enemyPool.length);
-    const randEnemy = enemyPool[randIdx];
-    if (randEnemy.isActive) {
-        return;
-    }
-    
-    randEnemy.ttl = TTL_SEC_ENEMY;
-    randEnemy.isActive = true;
-    randEnemy.mesh.visible = true;
-    enemyMovePatterns[randIdx % enemyMoveCount](randEnemy.collider);
+	if (Math.random() > (rate || enemyRate)) {
+		return;
+	}
+	
+	const randIdx = Math.floor(Math.random() * enemyPool.length);
+	const randEnemy = enemyPool[randIdx];
+	if (randEnemy.isActive) {
+		return;
+	}
+	
+	randEnemy.ttl = TTL_SEC_ENEMY;
+	randEnemy.isActive = true;
+	randEnemy.mesh.visible = true;
+	enemyMovePatterns[randIdx % enemyMoveCount](randEnemy.collider);
 };
 
 const getForwardVector = () => {
-    camera.getWorldDirection(playerDirection);
-    playerDirection.y = 0;
-    playerDirection.normalize();
-    
-    return playerDirection;
+	camera.getWorldDirection(playerDirection);
+	playerDirection.y = 0;
+	playerDirection.normalize();
+	
+	return playerDirection;
 };
 
 
 const getSideVector = () => {
-    camera.getWorldDirection(playerDirection);
-    playerDirection.y = 0;
-    playerDirection.normalize();
-    playerDirection.cross(camera.up);
-    
-    return playerDirection;
+	camera.getWorldDirection(playerDirection);
+	playerDirection.y = 0;
+	playerDirection.normalize();
+	playerDirection.cross(camera.up);
+	
+	return playerDirection;
 };
 
 
 const controls = (deltaTime: number) => {
-    // gives a bit of air control
-    const speedDelta = deltaTime * (playerOnFloor ? 25 : 8);
-    
-    if (keyStates[glfw.KEY_W]) {
-        playerVelocity.add(getForwardVector().multiplyScalar(speedDelta));
-    }
-    
-    if (keyStates[glfw.KEY_S]) {
-        playerVelocity.add(getForwardVector().multiplyScalar(-speedDelta));
-    }
-    
-    if (keyStates[glfw.KEY_A]) {
-        playerVelocity.add(getSideVector().multiplyScalar(-speedDelta));
-    }
-    
-    if (keyStates[glfw.KEY_D]) {
-        playerVelocity.add(getSideVector().multiplyScalar(speedDelta));
-    }
-    
-    if (playerOnFloor) {
-        if (keyStates[glfw.KEY_SPACE]) {
-            playerVelocity.y = SPEED_JUMP;
-        }
-    }
+	// gives a bit of air control
+	const speedDelta = deltaTime * (playerOnFloor ? 25 : 8);
+	
+	if (keyStates[glfw.KEY_W]) {
+		playerVelocity.add(getForwardVector().multiplyScalar(speedDelta));
+	}
+	
+	if (keyStates[glfw.KEY_S]) {
+		playerVelocity.add(getForwardVector().multiplyScalar(-speedDelta));
+	}
+	
+	if (keyStates[glfw.KEY_A]) {
+		playerVelocity.add(getSideVector().multiplyScalar(-speedDelta));
+	}
+	
+	if (keyStates[glfw.KEY_D]) {
+		playerVelocity.add(getSideVector().multiplyScalar(speedDelta));
+	}
+	
+	if (playerOnFloor) {
+		if (keyStates[glfw.KEY_SPACE]) {
+			playerVelocity.y = SPEED_JUMP;
+		}
+	}
 };
 
 
 const loader = new GLTFLoader().setPath(`${__dirname}/models/`);
 
 loader.load('collision-world.glb', (gltf) => {
-    scene.add(gltf.scene);
-    worldOctree.fromGraphNode(gltf.scene);
-    gltf.scene.traverse((child: (three.Object3D | three.Mesh)) => {
-        if (!(child instanceof three.Mesh)) {
-            return;
-        }
-        
-        child.castShadow = true;
-        child.receiveShadow = true;
-        
-        if (child.material.map) {
-            child.material.map.anisotropy = 4;
-        }
-    });
-    
-    const helper = new OctreeHelper(worldOctree);
-    helper.visible = false;
-    scene.add(helper);
+	scene.add(gltf.scene);
+	worldOctree.fromGraphNode(gltf.scene);
+	gltf.scene.traverse((child: (three.Object3D | three.Mesh)) => {
+		if (!(child instanceof three.Mesh)) {
+			return;
+		}
+		
+		child.castShadow = true;
+		child.receiveShadow = true;
+		
+		if (child.material.map) {
+			child.material.map.anisotropy = 4;
+		}
+	});
+	
+	const helper = new OctreeHelper(worldOctree);
+	helper.visible = false;
+	scene.add(helper);
 });
 
 const enemyPool: TActor[] = [];
 
 for (let i = 0; i < NUM_ENEMIES; i++) {
-    enemyPool.push({
-        isActive: false,
-        ttl: -1,
-        mesh: new three.Object3D(),
-        collider: new three.Sphere(POS_ACTOR_HIDDEN.clone(), ENEMY_RADIUS),
-        velocity: new three.Vector3(),
-        mixer: null,
-    });
+	enemyPool.push({
+		isActive: false,
+		ttl: -1,
+		mesh: new three.Object3D(),
+		collider: new three.Sphere(POS_ACTOR_HIDDEN.clone(), ENEMY_RADIUS),
+		velocity: new three.Vector3(),
+		mixer: null,
+	});
 }
 
 loader.load('Flamingo.glb', (gltf) => {
-    const mesh = gltf.scene.children[0];
-    
-    if (!(mesh instanceof three.Mesh)) {
-        return;
-    }
-    
-    const s = 0.01;
-    mesh.scale.set(s, s, s);
-    mesh.position.copy(POS_ACTOR_HIDDEN);
-    
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    
-    for (const enemy of enemyPool) {
-        const meshClone = mesh.clone();
-        scene.add(meshClone);
-        
-        const mixer = new three.AnimationMixer(meshClone);
-        mixer.clipAction(gltf.animations[0]).setDuration(1).play();
-        
-        enemy.mesh = meshClone;
-        enemy.mixer = mixer;
-    }
+	const mesh = gltf.scene.children[0];
+	
+	if (!(mesh instanceof three.Mesh)) {
+		return;
+	}
+	
+	const s = 0.01;
+	mesh.scale.set(s, s, s);
+	mesh.position.copy(POS_ACTOR_HIDDEN);
+	
+	mesh.castShadow = true;
+	mesh.receiveShadow = true;
+	
+	for (const enemy of enemyPool) {
+		const meshClone = mesh.clone();
+		scene.add(meshClone);
+		
+		const mixer = new three.AnimationMixer(meshClone);
+		mixer.clipAction(gltf.animations[0]).setDuration(1).play();
+		
+		enemy.mesh = meshClone;
+		enemy.mixer = mixer;
+	}
 });
 
 loader.load('blasterG.glb', (gltf) => {
-    const mesh = gltf.scene.children[0];
-    
-    gltf.scene.traverse((node) => {
-        node.layers.enable(LAYER_GUN);
-        node.layers.disable(LAYER_WORLD);
-        if (node instanceof three.Mesh) {
-            const mat = (node.material as three.MeshStandardMaterial);
-            const newMat = new three.MeshStandardMaterial({ color: mat.color });
-            // newMat.depthTest = false;
-            node.material = newMat;
-            node.castShadow = false;
-            node.receiveShadow = true;
-        }
-    });
-    
-    const s = 0.003;
-    mesh.scale.set(s, s, s);
-    mesh.position.set(0.002, -0.002, -0.007);
-    mesh.rotation.y = Math.PI + 0.1;
-    mesh.rotation.x = 0.1;
-    
-    gun.add(mesh);
+	const mesh = gltf.scene.children[0];
+	
+	gltf.scene.traverse((node) => {
+		node.layers.enable(LAYER_GUN);
+		node.layers.disable(LAYER_WORLD);
+		if (node instanceof three.Mesh) {
+			const mat = (node.material as three.MeshStandardMaterial);
+			const newMat = new three.MeshStandardMaterial({ color: mat.color });
+			// newMat.depthTest = false;
+			node.material = newMat;
+			node.castShadow = false;
+			node.receiveShadow = true;
+		}
+	});
+	
+	const s = 0.003;
+	mesh.scale.set(s, s, s);
+	mesh.position.set(0.002, -0.002, -0.007);
+	mesh.rotation.y = Math.PI + 0.1;
+	mesh.rotation.x = 0.1;
+	
+	gun.add(mesh);
 });
 
 
 loader.load('targetB.glb', (gltf) => {
-    const mesh = gltf.scene.children[0];
-    
-    gltf.scene.traverse((node) => {
-        if (node instanceof three.Mesh) {
-            const mat = (node.material as three.MeshStandardMaterial);
-            const newMat = new three.MeshStandardMaterial({ color: mat.color });
-            node.material = newMat;
-            node.castShadow = true;
-            node.receiveShadow = true;
-        }
-    });
-    
-    const s = 3.0;
-    mesh.scale.set(s, s, s);
-    mesh.position.copy(POS_ENEMY_TARGET);
-    mesh.rotation.z = Math.PI / 2;
-    
-    scene.add(mesh);
+	const mesh = gltf.scene.children[0];
+	
+	gltf.scene.traverse((node) => {
+		if (node instanceof three.Mesh) {
+			const mat = (node.material as three.MeshStandardMaterial);
+			const newMat = new three.MeshStandardMaterial({ color: mat.color });
+			node.material = newMat;
+			node.castShadow = true;
+			node.receiveShadow = true;
+		}
+	});
+	
+	const s = 3.0;
+	mesh.scale.set(s, s, s);
+	mesh.position.copy(POS_ENEMY_TARGET);
+	mesh.rotation.z = Math.PI / 2;
+	
+	scene.add(mesh);
 });
 
 
 const teleportPlayerIfOob = () => {
-    if (camera.position.y > -25) {
-        return;
-    }
-    
-    resetPlayer();
+	if (camera.position.y > -25) {
+		return;
+	}
+	
+	resetPlayer();
 };
 
 const animate = () => {
-    if (!health && hudState !== 'over') {
-        leaveGame();
-    }
-    
-    if (hudState === 'hud') {
-        const deltaTime = Math.min(0.05, clock.getDelta());
-        const deltaStep = deltaTime / STEPS_PER_FRAME;
-        
-        gunFuel = Math.min(1, gunFuel + deltaTime * GUN_REFILL_RATE);
-        
-        if (mouseTime) {
-            const dc = Math.min(1 - gunCharge, gunFuel, deltaTime * GUN_CHARGE_RATE);
-            gunFuel -= dc;
-            gunCharge += dc;
-        }
-        
-        // we look for collisions in substeps to mitigate the risk of
-        // an object traversing another too quickly for detection.
-        
-        for (let i = 0; i < STEPS_PER_FRAME; i++) {
-            controls(deltaStep);
-            updatePlayer(deltaStep);
-            updateSpheres(deltaStep);
-            teleportPlayerIfOob();
-        }
-        
-        updateEnemies(deltaTime);
-        
-        explosion.update(deltaTime);
-        
-        enemyRate += deltaTime * 0.0001;
-        difficulty += deltaTime * 0.01;
-        spawnEnemy();
-        
-        camera.rotation.y = targetRotY;
-        camera.rotation.x = targetRotX;
-        updateGunOffset(playerVelocity, deltaTime);
-    }
-    
-    renderer.render(scene, camera);
-    
-    const _background = scene.background;
-    const _fog = scene.fog;
-    scene.background = null;
-    scene.fog = null;
-    
-    if (hudState === 'hud') {
-        cameraGun.position.copy(camera.position);
-        cameraGun.rotation.copy(camera.rotation);
-        gun.position.copy(camera.position).add(gunOffset);
-        gun.rotation.copy(camera.rotation);
-    }
-    renderer.render(scene, cameraGun);
-    
-    scene.background = _background;
-    scene.fog = _fog;
+	if (!health && hudState !== 'over') {
+		leaveGame();
+	}
+	
+	if (hudState === 'hud') {
+		const deltaTime = Math.min(0.05, clock.getDelta());
+		const deltaStep = deltaTime / STEPS_PER_FRAME;
+		
+		gunFuel = Math.min(1, gunFuel + deltaTime * GUN_REFILL_RATE);
+		
+		if (mouseTime) {
+			const dc = Math.min(1 - gunCharge, gunFuel, deltaTime * GUN_CHARGE_RATE);
+			gunFuel -= dc;
+			gunCharge += dc;
+		}
+		
+		// we look for collisions in substeps to mitigate the risk of
+		// an object traversing another too quickly for detection.
+		
+		for (let i = 0; i < STEPS_PER_FRAME; i++) {
+			controls(deltaStep);
+			updatePlayer(deltaStep);
+			updateSpheres(deltaStep);
+			teleportPlayerIfOob();
+		}
+		
+		updateEnemies(deltaTime);
+		
+		explosion.update(deltaTime);
+		
+		enemyRate += deltaTime * 0.0001;
+		difficulty += deltaTime * 0.01;
+		spawnEnemy();
+		
+		camera.rotation.y = targetRotY;
+		camera.rotation.x = targetRotX;
+		updateGunOffset(playerVelocity, deltaTime);
+	}
+	
+	renderer.render(scene, camera);
+	
+	const _background = scene.background;
+	const _fog = scene.fog;
+	scene.background = null;
+	scene.fog = null;
+	
+	if (hudState === 'hud') {
+		cameraGun.position.copy(camera.position);
+		cameraGun.rotation.copy(camera.rotation);
+		gun.position.copy(camera.position).add(gunOffset);
+		gun.rotation.copy(camera.rotation);
+	}
+	renderer.render(scene, cameraGun);
+	
+	scene.background = _background;
+	scene.fog = _fog;
 };
 
 loop(animate);

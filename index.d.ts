@@ -123,5 +123,5 @@ declare module "3d-qml-raub" {
 	 * This function can be called repeatedly, but will ignore further calls.
 	 * The return value is cached and will be returned immediately for repeating calls.
 	 */
-	export const init: (opts?: TInitOpts) => TQml3D;
+	export const init: (opts: TInitOpts) => TQml3D;
 }

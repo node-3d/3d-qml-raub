@@ -26,15 +26,14 @@
 	},
 	"scripts": {
 		"eslint": "eslint .",
-		"test": "node --test --watch .",
-		"test-ci": "node --test"
+		"test": "node --test"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/node-3d/3d-qml-raub.git"
 	},
 	"dependencies": {
-		"qml-raub": "^3.1.0"
+		"qml-raub": "^3.1.1"
 	},
 	"devDependencies": {
 		"3d-core-raub": "^4.2.0",

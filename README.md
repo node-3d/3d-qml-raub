@@ -10,95 +10,95 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 npm i -s 3d-qml-raub
 ```
 
-
 QML-rendering extension for Node.js 3D Core. The QML backend is **Qt 5.13.0**.
 
 ![Example](examples/screenshot.jpg)
 
-
-As any Node3D plugin, `3d-qml-raub` exports a single function. Given a Node3D
-object this function extends with `qml` property. Now this property holds
-whatever this plugin offers.
-
-See [examples](examples) for more details.
-
-> Note: **IMPORTANT**, using QML, keep in mind it has its own OpenGL context, so
-when you use yours, be aware it might be not the current one.
+> Note: **IMPORTANT**, QML has its own OpenGL context. Make sure to switch back.
 Use `document.makeCurrent()` or `release()` (see exported below).
 
-
----
-
-First, import/init the plugin:
-
 ```
-const init3dCore = require('3d-core-raub');
+import * as three from 'three';
+import { init, addThreeHelpers } from '3d-core-raub';
+import { init as initQml } from '3d-qml-raub';
 
 const {
-	Image,
-	doc,
-	qml: { Material, Overlay, OverlayMaterial, Rect },
-} = init3dCore({ plugins: ['3d-qml-raub'] });
+	doc, Image: Img, gl,
+} = init({
+	isGles3: true, isWebGL2: true, autoEsc: true,
+});
+addThreeHelpers(three, gl);
 
-// ...
-```
-
-
----
-
-Use QML view as screen-size overlay like this:
-
-```
-const ui = new View({ width: screen.w, height: screen.h, file: `${__dirname}/qml/gui.qml` });
-
-doc.on('mousedown', ui.mousedown.bind(ui));
-doc.on('mouseup', ui.mouseup.bind(ui));
-doc.on('mousemove', ui.mousemove.bind(ui));
-doc.on('keydown', ui.keydown.bind(ui));
-doc.on('keyup', ui.keyup.bind(ui));
-doc.on('wheel', ui.wheel.bind(ui));
-
-new Overlay({ screen, view: ui });
-```
-
-This way you can run [real Qt examples](https://doc.qt.io/qt-5.11/qtquick-codesamples.html).
-One such example - [Dashboard](https://doc.qt.io/qt-5/qtquickextras-dashboard-example.html)
-was [copied](examples/qt-dashboard) from Qt instalation as a proof of concept.
-
----
-
-You can also extract the texture from a view:
-
-```
-// If the view already has some texture - use it
-mesh.material.texture = view.textureId !== undefined ?
-	three.Texture.fromId(view.textureId, renderer) :
-	null;
-
-// If the view creates a new texture - update the material
-ui.on('reset', texId => {
-	
-	release();
-	
-	mesh.material.texture = texId !== undefined ?
-		three.Texture.fromId(texId, renderer) :
-		null;
-	
+const {
+	QmlOverlay, Property, Method, View, loop, release, textureFromId,
+} = initQml({
+	doc, gl, cwd: __dirname, three,
 });
 ```
 
-It can be used to create your own overlay or even to texture a scene-space object.
-This is actually demonstrated in [scene-space example](examples/scene-space).
+* See [TypeScript declarations](/index.d.ts) for more details.
+* See [example](/examples/fps/main.ts) for a complete setup.
+
+It is also possible to run [QtQuick examples](https://doc.qt.io/qt-5.11/qtquick-codesamples.html)
+on Node.js with this renderer. But it will only work with `QtQuick` components, i.e.
+not `QtMultimedia`, `QtNetwork`, etc. - because those libs are not included.
+See [Dashboard](https://doc.qt.io/qt-5/qtquickextras-dashboard-example.html)
+example being [copied](examples/qt-dashboard) as a proof of concept.
 
 
-## Exports
+## QmlOverlay
 
-See docs of [qml-raub](https://github.com/node-3d/qml-raub). This plugin
-reexports those as is.
+A common use-case is full-screen overlay UI:
 
-Additionally there are few classes specific for this plugin:
-* `Rect` - scene-space Three.js rectangle designed to display QML GUI.
-* `Material` - Three.js material for scene-space texturing with QML GUI.
-* `Overlay` - fullscreen Three.js overlay to display QML GUI.
-* `OverlayMaterial` - Three.js material for fullscreen overlay with QML GUI.
-* `release()` - switch OpenGL context to that of the default `document`.
+```typescript
+// Loads QML and creates all threejs-related resources, e.g. `overlay.mesh` is `THREE.Mesh`
+const overlay = new QmlOverlay({ file: `${__dirname}/qml/Test.qml` });
+scene.add(overlay.mesh);
+
+// QML property access shortcut
+const propTest = new Property<string>({
+	view: overlay, name: 'hud', key: 'testProp',
+});
+
+// A typed callable example
+type TMethodTest = (arg0: number) => void;
+const methodTest: TMethodTest = new Method({
+	view: overlay, name: 'hud', key: 'testMethod',
+});
+
+// Listen to a user-defined event (could be any other name)
+overlay.on('custom-event', (event) => {
+	release();
+	if (event.button === 'test') {
+		console.log('test');
+	}
+	if (event.button === 'quit') {
+		process.exit(0)
+	}
+});
+
+propTest.value = 'test';
+methodTest(123);
+```
+
+See [examples](examples) for more details.
+
+
+## Any Material
+
+Creating a threejs `Texture` from QML `View` is also supported.
+Such textures may be used in arbitrary threejs materials of your choise.
+
+```js
+const testView = new View({ file: `${__dirname}/qml/Test.qml` });
+const materialTest = new three.SpriteMaterial();
+
+// If the view already has some texture - use it
+materialTest.map = textureFromId(testView.textureId, renderer);
+
+// If the view creates a new texture - update the material
+testView.on('reset', (textureId) => {
+	release();
+	materialTest.map = textureFromId(textureId, renderer);
+});
+```

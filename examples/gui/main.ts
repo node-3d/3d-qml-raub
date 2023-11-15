@@ -24,7 +24,7 @@ const { QmlOverlay, loop } = initQml({ doc, gl, cwd: __dirname, three });
 
 const icon = new Img(__dirname + '/../qml.png');
 icon.on('load', () => { doc.icon = (icon as unknown as typeof doc.icon); });
-doc.title = 'QML UI';
+doc.title = 'QML Tree';
 
 
 const scene = new three.Scene();
