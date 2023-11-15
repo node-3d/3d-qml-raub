@@ -43,7 +43,6 @@ const POS_ACTOR_HIDDEN = new three.Vector3(0, -100, 0);
 const POS_PLAYER_START = new three.Vector3(0, 0.35, 0);
 const POS_PLAYER_END = new three.Vector3(0, 1, 0);
 const POS_ENEMY_TARGET = new three.Vector3(-2, 0.78, 0);
-// const EXPLOSION_SPEED = 0.1;
 const SPARK_SIZE = 0.1;
 const SCALE_EXPLOSION_START = 0.01;
 const GUN_REFILL_RATE = 0.3;
@@ -51,6 +50,8 @@ const GUN_CHARGE_RATE = 0.7;
 const SPEED_JUMP = 12;
 const LAYER_WORLD = 0;
 const LAYER_GUN = 1;
+const ENEMY_RATE_START = 0.0005;
+const DIFFICULTY_START = 1;
 
 const sphereGeometry = new three.IcosahedronGeometry(SPHERE_RADIUS, 5);
 const sphereMaterial = new three.MeshStandardMaterial({ color: 0xdede8d, emissive: 0x8ddede, emissiveIntensity: 0.2 });
@@ -72,6 +73,8 @@ let gameScore: number = 0;
 let gunCharge: number = 0;
 let gunFuel: number = 1;
 let health: number = 100;
+let enemyRate = ENEMY_RATE_START;
+let difficulty = DIFFICULTY_START;
 
 const clock = new three.Clock();
 
@@ -297,6 +300,9 @@ const restartGame = () => {
 	resetSpheres();
 	resetEnemies();
 	spawnEnemy(1);
+	
+	enemyRate = ENEMY_RATE_START;
+	difficulty = DIFFICULTY_START;
 	
 	gunCharge = 0;
 	gunFuel = 1;
@@ -653,7 +659,6 @@ const updateSpheres = (deltaTime: number) => {
 	}
 };
 
-let difficulty = 1;
 const enemyMovePatterns = [
 	(collider: three.Sphere) => {
 		const time = Date.now() * 0.0001;
@@ -729,7 +734,6 @@ const updateEnemies = (deltaTime: number) => {
 	}
 };
 
-let enemyRate = 0.0005;
 const spawnEnemy = (rate: number = 0) => {
 	if (Math.random() > (rate || enemyRate)) {
 		return;
