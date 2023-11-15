@@ -12,16 +12,17 @@ npm i -s 3d-qml-raub
 
 QML-rendering extension for Node.js 3D Core. The QML backend is **Qt 5.13.0**.
 
-![Example](examples/screenshot.jpg)
+![Example](examples/screenshot.png)
 
 > Note: **IMPORTANT**, QML has its own OpenGL context. Make sure to switch back.
 Use `document.makeCurrent()` or `release()` (see exported below).
 
-```
+```typescript
 import * as three from 'three';
 import { init, addThreeHelpers } from '3d-core-raub';
 import { init as initQml } from '3d-qml-raub';
 
+// Standard Node3D init
 const {
 	doc, Image: Img, gl,
 } = init({
@@ -29,6 +30,7 @@ const {
 });
 addThreeHelpers(three, gl);
 
+// Initialize QML and fetch the helpers
 const {
 	QmlOverlay, Property, Method, View, loop, release, textureFromId,
 } = initQml({
