@@ -4,14 +4,14 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dashboard": "npx ts-node-esm qt-dashboard/main.ts",
-		"gui": "npx ts-node-esm gui/main.ts",
-		"fps": "npx ts-node-esm fps/main.ts",
-		"tree": "npx ts-node-esm tree/main.ts"
+		"dashboard": "tsx qt-dashboard/main.ts",
+		"gui": "tsx gui/main.ts",
+		"fps": "tsx fps/main.ts",
+		"tree": "tsx tree/main.ts"
 	},
 	"dependencies": {
 		"3d-qml-raub": "file:..",
 		"tsconfig-paths": "^4.2.0",
-		"ts-node": "^10.9.1"
+		"tsx": "^4.16.2"
 	}
 }
