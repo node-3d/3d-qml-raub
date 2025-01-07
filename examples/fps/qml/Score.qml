@@ -1,20 +1,19 @@
-import QtQuick 2.7
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Layouts
 
 
 Item {
-	FontLoader { id: future; source: 'fonts/Kenney Future Narrow.ttf' }
-	FontLoader { id: bookxel; source: 'fonts/Bookxel.otf' }
-	
-	readonly property int fontSizeTitle: 84
-	readonly property int fontSizeValue: 110
-	readonly property string shadowColor: '#222222'
-	
 	id: root
 	objectName: 'score'
 	anchors.fill: parent
 	
+	readonly property int fontSizeTitle: 84
+	readonly property int fontSizeValue: 110
+	readonly property string shadowColor: '#222222'
 	property real score: 0
+	
+	FontLoader { id: future; source: 'fonts/Kenney Future Narrow.ttf' }
+	FontLoader { id: bookxel; source: 'fonts/Bookxel.otf' }
 	
 	ColumnLayout {
 		anchors.centerIn: parent
@@ -23,7 +22,7 @@ Item {
 			text: 'SCORE'
 			Layout.alignment: Qt.AlignHCenter
 			
-			font.pixelSize: fontSizeTitle
+			font.pixelSize: root.fontSizeTitle
 			font.bold: true
 			font.family: future.name
 			color: '#FAFACC'
@@ -36,7 +35,7 @@ Item {
 			text: Math.min(9999, root.score)
 			Layout.alignment: Qt.AlignHCenter
 			
-			font.pixelSize: fontSizeValue
+			font.pixelSize: root.fontSizeValue
 			font.bold: true
 			font.family: bookxel.name
 			color: 'white'

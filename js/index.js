@@ -15,21 +15,19 @@ const _init = (opts = {}) => {
 	const release = () => doc.makeCurrent();
 	
 	View.init(cwd, doc.platformWindow, doc.platformContext, doc.platformDevice);
+	View.style('Basic');
 	release();
 	
 	const loop = (cb) => {
-		let i = 0;
-		
-		const animation = () => {
-			doc.requestAnimationFrame(animation);
-			
+		let next = null;
+		const loopFunc = () => {
 			View.update();
-			release();
-			
-			cb(i++);
+			doc.makeCurrent();
+			cb();
+			next = doc.requestAnimationFrame(loopFunc);
 		};
-		
-		doc.requestAnimationFrame(animation);
+		next = doc.requestAnimationFrame(loopFunc);
+		return () => doc.cancelAnimationFrame(next);
 	};
 	
 	const textureFromId = (id, renderer) => {

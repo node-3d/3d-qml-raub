@@ -1,4 +1,4 @@
-# Node.js 3D QML
+# Node.js 3D QML Helpers
 
 This is a part of [Node3D](https://github.com/node-3d) project.
 
@@ -10,7 +10,8 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 npm i -s 3d-qml-raub
 ```
 
-QML-rendering extension for Node.js 3D Core. The QML backend is **Qt 5.13.0**.
+[QML](https://doc.qt.io/qt-6/qmlapplications.html)-rendering helpers for Node.js 3D Core.
+The QML backend is **Qt 6.8.0**.
 
 ![Example](examples/screenshot.png)
 
@@ -41,7 +42,7 @@ const {
 * See [TypeScript declarations](/index.d.ts) for more details.
 * See [example](/examples/fps/main.ts) for a complete setup.
 
-It is also possible to run [QtQuick examples](https://doc.qt.io/qt-5.11/qtquick-codesamples.html)
+It is also possible to run [QtQuick examples](https://doc.qt.io/qt-6/qtquick-codesamples.html)
 on Node.js with this renderer. But it will only work with `QtQuick` components, i.e.
 not `QtMultimedia`, `QtNetwork`, etc. - because those libs are not included.
 See [Dashboard](https://doc.qt.io/qt-5/qtquickextras-dashboard-example.html)

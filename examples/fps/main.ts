@@ -17,7 +17,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const {
 	doc, Image: Img, gl, glfw,
 } = init({
-	isGles3: true, isWebGL2: true, mode: 'borderless',
+	isGles3: true, isWebGL2: true, mode: 'borderless', vsync: true,
 });
 
 addThreeHelpers(three, gl);
@@ -109,7 +109,7 @@ gun.layers.disable(LAYER_WORLD);
 const scoreView = new View({ file: `${__dirname}/qml/Score.qml` });
 const materialScore = new three.SpriteMaterial();
 materialScore.map = textureFromId(scoreView.textureId, renderer);
-scoreView.on('reset', (textureId) => {
+scoreView.on('reset', (textureId: number): void => {
 	release();
 	materialScore.map = textureFromId(textureId, renderer);
 });
@@ -341,7 +341,8 @@ const leaveGame = () => {
 	doc.releasePointerCapture();
 };
 
-overlay.on('custom-esc', (event) => {
+type TEscEvent = Readonly<{ button: string }>;
+overlay.on('custom-esc', (event: TEscEvent) => {
 	release();
 	if (event.button === 'resume') {
 		mouseTime = 0;
@@ -747,8 +748,9 @@ const spawnEnemy = (rate: number = 0) => {
 	
 	randEnemy.ttl = TTL_SEC_ENEMY;
 	randEnemy.isActive = true;
-	randEnemy.mesh.visible = true;
 	enemyMovePatterns[randIdx % enemyMoveCount](randEnemy.collider);
+	randEnemy.mesh.position.copy(randEnemy.collider.center);
+	randEnemy.mesh.visible = true;
 };
 
 const getForwardVector = () => {

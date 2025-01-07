@@ -7,7 +7,7 @@ const QmlOverlayMaterial = require('./qml-overlay-material')();
 
 const _init = ({ doc, three }) => {
 	if (!doc) {
-		console.error('Can\'t init QmlOverlayMaterial with no `three`.');
+		console.error('Can\'t init QmlOverlayMaterial with no `doc`.');
 		return null;
 	}
 	
@@ -46,6 +46,8 @@ const _init = ({ doc, three }) => {
 				release();
 				this._mat.textureId = textureId;
 			});
+			
+			this.on('error', () => undefined);
 			
 			doc.on('mousedown', (e) => this._routeEvent('mousedown', e));
 			doc.on('mouseup', (e) => this._routeEvent('mouseup', e));

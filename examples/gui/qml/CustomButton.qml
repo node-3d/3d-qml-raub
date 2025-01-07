@@ -1,19 +1,18 @@
-import QtQuick 2.7
+import QtQuick
 
 Rectangle {
+	id: button
 	
 	signal clicked
 	
-	property alias text : buttonText.text
+	property alias text: buttonText.text
 	
-	id : button
+	width: buttonText.width + 40
+	height: 45
+	radius: 2
+	antialiasing: true
 	
-	width  : buttonText.width + 40
-	height : 45
-	radius : 2
-	antialiasing : true
-	
-	gradient : Gradient {
+	gradient: Gradient {
 		GradientStop {
 			position: 0.0
 			color: "lightsteelblue"
@@ -25,26 +24,24 @@ Rectangle {
 	}
 	
 	Text {
-		id : buttonText
-		text : parent.description
-		anchors.centerIn : parent
-		font.pixelSize : parent.height * 0.6
-		color : "white"
-		styleColor : "black"
+		id: buttonText
+		anchors.centerIn: parent
+		font.pixelSize: parent.height * 0.6
+		color: "white"
+		styleColor: "black"
 	}
 	
 	MouseArea {
-		id : mouseArea
-		hoverEnabled : true
-		anchors.fill : parent
-		onClicked : parent.clicked()
+		id: mouseArea
+		hoverEnabled: true
+		anchors.fill: parent
+		onClicked: parent.clicked()
 	}
 	
 	Keys.onSpacePressed: clicked()
 	
-	Accessible.name : text
-	Accessible.description : "This button does " + text
-	Accessible.role : Accessible.Button
-	Accessible.onPressAction : { button.clicked() }
-	
+	Accessible.name: text
+	Accessible.description: "This button does " + text
+	Accessible.role: Accessible.Button
+	Accessible.onPressAction: { button.clicked() }
 }

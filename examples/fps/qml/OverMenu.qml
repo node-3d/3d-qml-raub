@@ -1,5 +1,5 @@
-import QtQuick 2.7
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Layouts
 
 
 Rectangle {
@@ -14,8 +14,8 @@ Rectangle {
 		
 		Item {
 			Layout.alignment: Qt.AlignHCenter
-			width: 512
-			height: 256
+			Layout.preferredWidth: 512
+			Layout.preferredHeight: 256
 			Score {
 				id: score
 			}

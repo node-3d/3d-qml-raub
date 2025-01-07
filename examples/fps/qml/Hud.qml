@@ -1,5 +1,4 @@
-import QtQuick 2.7
-import QtQuick.Layouts 1.3
+import QtQuick
 
 Rectangle {
 	id: root
@@ -41,20 +40,20 @@ Rectangle {
 	}
 	
 	StartMenu {
-		visible: mode === 'start'
+		visible: root.mode === 'start'
 	}
 	
 	HudView {
 		id: hud
-		visible: mode === 'hud'
+		visible: root.mode === 'hud'
 	}
 	
 	EscMenu {
-		visible: mode === 'esc'
+		visible: root.mode === 'esc'
 	}
 	
 	OverMenu {
 		id: over
-		visible: mode === 'over'
+		visible: root.mode === 'over'
 	}
 }

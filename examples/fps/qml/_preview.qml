@@ -1,7 +1,7 @@
-import QtQuick 2.7
+import QtQuick
 import QtQuick.Window 2.7
 import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts
 
 Window {
 	visible: true
