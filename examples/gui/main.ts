@@ -10,39 +10,25 @@ import { init as initQml } from '3d-qml-raub';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const {
-	doc, Image: Img, gl,
+	doc, Image: Img, gl, Screen,
 } = init({
 	isGles3: true,
 	isWebGL2: true,
 	autoEsc: true,
 	autoFullscreen: true,
+	title: 'QML UI',
 });
-
 addThreeHelpers(three, gl);
+
+const screen = new Screen({ three, fov: 90, near: 1, far: 2000, z: 1000 });
+const scene = screen.scene;
 
 const { QmlOverlay, loop } = initQml({ doc, gl, cwd: __dirname, three });
 
-const icon = new Img(__dirname + '/../qml.png');
+const icon = new Img('qml.png'); // use `npm run gui` from "examples", so CWD is there
 icon.on('load', () => { doc.icon = (icon as unknown as typeof doc.icon); });
-doc.title = 'QML UI';
 
-
-const scene = new three.Scene();
-scene.fog = new three.FogExp2( 0x000000, 0.0007 );
-
-const cameraPerspective = new three.PerspectiveCamera(90, doc.w / doc.h, 1, 2000);
-cameraPerspective.position.z = 1000;
-
-const renderer = new three.WebGLRenderer();
-renderer.setPixelRatio(doc.devicePixelRatio);
-renderer.setSize(doc.w, doc.h);
-// renderer.debug.checkShaderErrors = false;
-
-doc.on('resize', () => {
-	cameraPerspective.aspect = doc.w / doc.h;
-	cameraPerspective.updateProjectionMatrix();
-	renderer.setSize(doc.w, doc.h);
-});
+scene.fog = new three.FogExp2(0x000000, 0.0007);
 
 const overlay = new QmlOverlay({ file: `${__dirname}/qml/gui.qml` });
 scene.add(overlay.mesh);
@@ -83,7 +69,7 @@ const update = () => {
 	material.color.setHSL(getTimeHue(), 1, 0.5);
 	particles.rotation.y = Date.now() * 0.00005;
 	
-	renderer.render(scene, cameraPerspective);
+	screen.draw();
 };
 
 loop(() => update());

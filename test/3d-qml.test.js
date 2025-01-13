@@ -3,23 +3,9 @@
 
 const assert = require('node:assert').strict;
 const { describe, it } = require('node:test');
-const three = require('three');
-const { init, addThreeHelpers } = require('3d-core-raub');
-const { init: initQml } = require('..');
 
-const {
-	doc, gl,
-} = init({
-	isGles3: true, isWebGL2: true,
-});
-
-addThreeHelpers(three, gl);
-
-const inited = initQml({ doc, gl, cwd: __dirname, three });
-
-const {
-	QmlOverlay, QmlMaterial, QmlOverlayMaterial, View,
-} = inited;
+const inited = require('./init')();
+const { QmlOverlay, QmlMaterial, QmlOverlayMaterial, loop, window } = inited;
 
 const initResults = [
 	'QmlOverlay', 'QmlMaterial', 'QmlOverlayMaterial',
@@ -30,7 +16,7 @@ const initResults = [
 const initedClasses = {
 	QmlOverlay: {
 		create() {
-			return new QmlOverlay({ file: `${__dirname}/qml/Hud.qml` });
+			return new QmlOverlay({ file: `${__dirname}/test.qml` });
 		},
 		props: ['isVisible', 'isDisabled', 'material', 'mesh'],
 	},
@@ -87,7 +73,11 @@ const tested = describe('Qml 3D Inited', () => {
 });
 
 (async () => {
-	const interv = setInterval(View.update, 15);
+	const stop = loop(() => {
+		
+	});
 	await tested;
-	clearInterval(interv);
+	stop();
+	window.destroy();
+	setTimeout(() => undefined, 500);
 })();

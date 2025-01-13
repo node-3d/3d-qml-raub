@@ -10,8 +10,6 @@ declare module "3d-qml-raub" {
 	type View = typeof import('qml-raub').View;
 	type Document = import('glfw-raub').Document;
 	
-	type TLoop = (cb: (i: number) => void) => void;
-	
 	type WebGLRendererInstance = InstanceType<WebGLRenderer>;
 	type TextureInstance = InstanceType<Texture>;
 	type ShaderMaterialInstance = InstanceType<ShaderMaterial>;
@@ -84,9 +82,9 @@ declare module "3d-qml-raub" {
 		textureFromId: (id: number | null, renderer: WebGLRendererInstance) => TextureInstance;
 		
 		/**
-		 * Adjusted frame-loop helper, calls `release` automatically.
+		 * Adjusted frame-loop helper, calls `doc.makeCurrent()` automatically.
 		 */
-		loop: TLoop,
+		loop: (cb: () => void) => void,
 		
 		/**
 		 * Fullscreen QML overlay.

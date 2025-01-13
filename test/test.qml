@@ -1,12 +1,11 @@
 import QtQuick
 
 Rectangle {
-	
-	color: 'yellow'
 	anchors.fill: parent
 	
+	color: 'yellow'
+	
 	Item {
-		
 		objectName: 'obj1'
 		property var prop1: 'value1'
 		property var prop2: 'value2'
@@ -21,6 +20,8 @@ Rectangle {
 			cb.call('m2c', x);
 		}
 		
+		Text {
+			text: 'Hello World!'
+		}
 	}
-	
 }
