@@ -4,10 +4,10 @@ const assert = require('node:assert').strict;
 const { describe, it } = require('node:test');
 const three = require('three');
 
-// const { screenshot } = require('./screenshot');
+const { screenshot } = require('./screenshot');
 const inited = require('./init')();
-// const { window, QmlOverlay, loop, doc, Image } = inited;
-const { window, loop, QmlOverlay } = inited;
+const { window, QmlOverlay, loop, doc, Image } = inited;
+// const { window, loop, QmlOverlay } = inited;
 
 const renderer = new three.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -21,24 +21,24 @@ const loadPromise = Promise.race([
 	new Promise((res) => { setTimeout(() => res(false), 5000); }),
 	new Promise((res) => overlay.on('load', () => res(true))),
 ]);
-// const texturePromise = Promise.race([
-// 	new Promise((res) => { setTimeout(() => res(null), 5000); }),
-// 	// new Promise((res) => overlay.on('reset', (id) => res(id))),
-// ]);
-// scene.add(overlay.mesh);
+const texturePromise = Promise.race([
+	new Promise((res) => { setTimeout(() => res(null), 5000); }),
+	new Promise((res) => overlay.on('reset', (id) => res(id))),
+]);
+scene.add(overlay.mesh);
 
 
 const tested = describe('Screenshots', () => {
 	it('matches ui screenshot', async () => {
 		const loaded = await loadPromise;
 		assert.strictEqual(loaded, true);
-		// const texture = await texturePromise;
-		// assert.ok(texture);
+		const texture = await texturePromise;
+		assert.ok(texture);
 		
-		// await new Promise((res) => setTimeout(res, 100));
-		// renderer.render(scene, camera);
+		await new Promise((res) => setTimeout(res, 1000));
+		renderer.render(scene, camera);
 		
-		// assert.ok(await screenshot('ui', doc, Image));
+		assert.ok(await screenshot('ui', doc, Image));
 	});
 });
 

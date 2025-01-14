@@ -9,13 +9,11 @@ const initForTest = () => {
 	});
 
 	const { doc, gl } = node3d;
-	// const { gl } = node3d;
 
 	addThreeHelpers(three, gl);
 
 	const inited = initQml({ doc, gl, cwd: __dirname, three });
 	return { ...node3d, ...inited };
-	// return node3d;
 };
 
 module.exports = initForTest;
