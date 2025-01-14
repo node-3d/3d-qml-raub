@@ -40,4 +40,4 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -qq libgles2-mesa-dev libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0 libxcb-xkb1 libxkbcommon-x11-0
-          xvfb-run --auto-servernum npm run test-ci
+          QT_QPA_PLATFORM=xcb xvfb-run --auto-servernum npm run test-ci
