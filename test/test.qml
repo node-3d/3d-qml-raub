@@ -5,6 +5,11 @@ Rectangle {
 	
 	color: 'yellow'
 	
+	FontLoader {
+		id: _regular
+		source: "./OpenSans-Regular.ttf"
+	}
+	
 	Item {
 		objectName: 'obj1'
 		property var prop1: 'value1'
@@ -22,6 +27,9 @@ Rectangle {
 		
 		Text {
 			text: 'Hello World!'
+			font.family: _regular.name
+			font.weight: Font.Normal
+			font.pixelSize: 20
 		}
 	}
 }
