@@ -35,8 +35,8 @@ const tested = describe('Screenshots', () => {
 		// const texture = await texturePromise;
 		// assert.ok(texture);
 		
-		await new Promise((res) => setTimeout(res, 100));
-		renderer.render(scene, camera);
+		// await new Promise((res) => setTimeout(res, 100));
+		// renderer.render(scene, camera);
 		
 		// assert.ok(await screenshot('ui', doc, Image));
 	});

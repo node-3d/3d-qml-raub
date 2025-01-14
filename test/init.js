@@ -1,6 +1,6 @@
 const three = require('three');
 const { init, addThreeHelpers } = require('3d-core-raub');
-// const { init: initQml } = require('..');
+const { init: initQml } = require('..');
 
 const initForTest = () => {
 	const node3d = init({
@@ -8,14 +8,14 @@ const initForTest = () => {
 		width: 200, height: 200,
 	});
 
-	// const { doc, gl } = node3d;
-	const { gl } = node3d;
+	const { doc, gl } = node3d;
+	// const { gl } = node3d;
 
 	addThreeHelpers(three, gl);
 
-	// const inited = initQml({ doc, gl, cwd: __dirname, three });
-	// return { ...node3d, ...inited };
-	return node3d;
+	const inited = initQml({ doc, gl, cwd: __dirname, three });
+	return { ...node3d, ...inited };
+	// return node3d;
 };
 
 module.exports = initForTest;
