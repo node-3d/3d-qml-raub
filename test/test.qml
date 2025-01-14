@@ -3,12 +3,7 @@ import QtQuick
 Rectangle {
 	anchors.fill: parent
 	
-	color: 'yellow'
-	
-	FontLoader {
-		id: _regular
-		source: "./OpenSans-Regular.ttf"
-	}
+	color: 'grey'
 	
 	Item {
 		objectName: 'obj1'
@@ -25,11 +20,24 @@ Rectangle {
 			cb.call('m2c', x);
 		}
 		
-		Text {
-			text: 'Hello World!'
-			font.family: _regular.name
-			font.weight: Font.Normal
-			font.pixelSize: 20
+		Row {
+			padding: 10
+			spacing: 10
+			Rectangle {
+				width: 32
+				height: 32
+				color: 'red'
+			}
+			Rectangle {
+				width: 32
+				height: 32
+				color: 'green'
+			}
+			Rectangle {
+				width: 32
+				height: 32
+				color: 'blue'
+			}
 		}
 	}
 }
