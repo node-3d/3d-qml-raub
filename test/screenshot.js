@@ -1,133 +1,133 @@
-'use strict';
+// 'use strict';
 
-const fs = require('node:fs');
+// const fs = require('node:fs');
 
-const pixelThreshold = 0.2; // threshold error in one pixel
-const maxFailedPixels = 100; // total failed pixels
+// const pixelThreshold = 0.2; // threshold error in one pixel
+// const maxFailedPixels = 100; // total failed pixels
 
-const makePathDiff = (name) => `test/__diff__/${name}.png`;
-const makePathExpected = (name) => `test/__diff__/${name}__expected__.png`;
-const makePathActual = (name) => `test/__diff__/${name}__actual__.png`;
-const makePathExport = (name) => `__screenshots__/${name}.png`;
+// const makePathDiff = (name) => `test/__diff__/${name}.png`;
+// const makePathExpected = (name) => `test/__diff__/${name}__expected__.png`;
+// const makePathActual = (name) => `test/__diff__/${name}__actual__.png`;
+// const makePathExport = (name) => `__screenshots__/${name}.png`;
 
 
-const allocBuffer = (doc) => {
-	const memSize = doc.w * doc.h * 4; // estimated number of bytes
-	return Buffer.allocUnsafeSlow(memSize);
-};
+// const allocBuffer = (doc) => {
+// 	const memSize = doc.w * doc.h * 4; // estimated number of bytes
+// 	return Buffer.allocUnsafeSlow(memSize);
+// };
 
-const getImage = (doc, Image) => {
-	try {
-		const storage = { data: allocBuffer(doc) };
+// const getImage = (doc, Image) => {
+// 	try {
+// 		const storage = { data: allocBuffer(doc) };
 		
-		doc.context.readPixels(
-			0, 0,
-			doc.w, doc.h,
-			doc.context.RGBA,
-			doc.context.UNSIGNED_BYTE,
-			storage
-		);
+// 		doc.context.readPixels(
+// 			0, 0,
+// 			doc.w, doc.h,
+// 			doc.context.RGBA,
+// 			doc.context.UNSIGNED_BYTE,
+// 			storage
+// 		);
 		
-		const img = Image.fromPixels(doc.w, doc.h, 32, storage.data);
-		return img;
-	} catch (error) {
-		console.error(error);
-		return null;
-	}
-};
+// 		const img = Image.fromPixels(doc.w, doc.h, 32, storage.data);
+// 		return img;
+// 	} catch (error) {
+// 		console.error(error);
+// 		return null;
+// 	}
+// };
 
 
-const makeScreenshot = (name, doc, Image) => {
-	console.info(`Screenshot: ${name}`);
-	const img = getImage(doc, Image);
-	if (img) {
-		img.save(makePathExport(name));
-		console.info(`Screenshot: ${name} generated`);
-	}
-};
+// const makeScreenshot = (name, doc, Image) => {
+// 	console.info(`Screenshot: ${name}`);
+// 	const img = getImage(doc, Image);
+// 	if (img) {
+// 		img.save(makePathExport(name));
+// 		console.info(`Screenshot: ${name} generated`);
+// 	}
+// };
 
-const compareScreenshot = async (name, doc, Image) => {
-	const path = makePathExport(name);
-	if (!fs.existsSync(path)) {
-		console.error(`Warning! No such screenshot: ${name}.`);
-		return false;
-	}
+// const compareScreenshot = async (name, doc, Image) => {
+// 	const path = makePathExport(name);
+// 	if (!fs.existsSync(path)) {
+// 		console.error(`Warning! No such screenshot: ${name}.`);
+// 		return false;
+// 	}
 	
-	const actualImage = getImage(doc, Image);
-	if (!actualImage) {
-		return false;
-	}
+// 	const actualImage = getImage(doc, Image);
+// 	if (!actualImage) {
+// 		return false;
+// 	}
 	
-	const expectedImage = await Image.loadAsync(path);
+// 	const expectedImage = await Image.loadAsync(path);
 	
-	const diff = allocBuffer(doc);
+// 	const diff = allocBuffer(doc);
 	
-	let numFailedPixels = 0;
+// 	let numFailedPixels = 0;
 	
-	try {
-		const { default: pixelmatch } = await import('pixelmatch');
+// 	try {
+// 		const { default: pixelmatch } = await import('pixelmatch');
 		
-		numFailedPixels = pixelmatch(
-			expectedImage.data,
-			actualImage.data,
-			diff,
-			actualImage.width,
-			actualImage.height,
-			{
-				threshold: pixelThreshold,
-				alpha: 0.3,
-				diffMask: false,
-				diffColor: [255, 0, 0],
-			},
-		);
-	} catch (error) {
-		console.error(error);
-		return false;
-	}
+// 		numFailedPixels = pixelmatch(
+// 			expectedImage.data,
+// 			actualImage.data,
+// 			diff,
+// 			actualImage.width,
+// 			actualImage.height,
+// 			{
+// 				threshold: pixelThreshold,
+// 				alpha: 0.3,
+// 				diffMask: false,
+// 				diffColor: [255, 0, 0],
+// 			},
+// 		);
+// 	} catch (error) {
+// 		console.error(error);
+// 		return false;
+// 	}
 	
-	const pathDiff = makePathDiff(name);
+// 	const pathDiff = makePathDiff(name);
 	
-	if (numFailedPixels) {
-		console.warn(`Screenshot: ${name} - ${numFailedPixels}/${maxFailedPixels}.`);
-		const pathExpected = makePathExpected(name);
-		const pathActual = makePathActual(name);
-		actualImage.save(pathActual);
-		expectedImage.save(pathExpected);
+// 	if (numFailedPixels) {
+// 		console.warn(`Screenshot: ${name} - ${numFailedPixels}/${maxFailedPixels}.`);
+// 		const pathExpected = makePathExpected(name);
+// 		const pathActual = makePathActual(name);
+// 		actualImage.save(pathActual);
+// 		expectedImage.save(pathExpected);
 		
-		const diffImage = Image.fromPixels(doc.w, doc.h, 32, diff);
-		diffImage.save(pathDiff);
+// 		const diffImage = Image.fromPixels(doc.w, doc.h, 32, diff);
+// 		diffImage.save(pathDiff);
 		
-		const isError = numFailedPixels >= maxFailedPixels;
-		console[isError ? 'error' : 'warn']([
-			`Screenshot: ${name}.`,
-			`Failed pixels: ${numFailedPixels}/${maxFailedPixels}.`,
-			`Diff written: ${pathDiff}.`,
-		].join('\n'));
+// 		const isError = numFailedPixels >= maxFailedPixels;
+// 		console[isError ? 'error' : 'warn']([
+// 			`Screenshot: ${name}.`,
+// 			`Failed pixels: ${numFailedPixels}/${maxFailedPixels}.`,
+// 			`Diff written: ${pathDiff}.`,
+// 		].join('\n'));
 		
-		return !isError;
-	}
+// 		return !isError;
+// 	}
 	
-	return true;
-};
+// 	return true;
+// };
 
 
-const screenshot = async (name, doc, Image) => {
-	try {
-		const path = makePathExport(name);
+// const screenshot = async (name, doc, Image) => {
+// 	try {
+// 		const path = makePathExport(name);
 		
-		const isCi = !!process.env['CI'];
-		const hasFile = fs.existsSync(path);
+// 		const isCi = !!process.env['CI'];
+// 		const hasFile = fs.existsSync(path);
 		
-		if (!hasFile && !isCi) {
-			await makeScreenshot(name, doc, Image);
-			return true;
-		}
+// 		if (!hasFile && !isCi) {
+// 			await makeScreenshot(name, doc, Image);
+// 			return true;
+// 		}
 		
-		return compareScreenshot(name, doc, Image);
-	} catch (error) {
-		console.error(error);
-		return false;
-	}
-};
+// 		return compareScreenshot(name, doc, Image);
+// 	} catch (error) {
+// 		console.error(error);
+// 		return false;
+// 	}
+// };
 
-module.exports = { screenshot };
+// module.exports = { screenshot };

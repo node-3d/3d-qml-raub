@@ -4,9 +4,10 @@ const assert = require('node:assert').strict;
 const { describe, it } = require('node:test');
 const three = require('three');
 
-const { screenshot } = require('./screenshot');
+// const { screenshot } = require('./screenshot');
 const inited = require('./init')();
-const { window, QmlOverlay, loop, doc, Image } = inited;
+// const { window, QmlOverlay, loop, doc, Image } = inited;
+const { window, loop } = inited;
 
 const renderer = new three.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
