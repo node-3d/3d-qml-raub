@@ -8,13 +8,14 @@ const initForTest = () => {
 		width: 200, height: 200,
 	});
 
-	const { doc, gl } = node3d;
+	// const { doc, gl } = node3d;
+	const { gl } = node3d;
 
 	addThreeHelpers(three, gl);
 
 	// const inited = initQml({ doc, gl, cwd: __dirname, three });
 	// return { ...node3d, ...inited };
-	return inited;
+	return node3d;
 };
 
 module.exports = initForTest;
