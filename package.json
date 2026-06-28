@@ -1,11 +1,11 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
-	"name": "3d-qml-raub",
-	"version": "4.0.0",
+	"name": "@node-3d/plugin-qml",
+	"version": "5.0.0",
 	"description": "QML 2D graphics plugin for Node.js 3D Core",
 	"license": "MIT",
-	"main": "index.js",
-	"type": "commonjs",
+	"main": "dist/index.js",
+	"type": "module",
 	"keywords": [
 		"plugin",
 		"3d",
@@ -14,36 +14,57 @@
 		"graphics"
 	],
 	"files": [
-		"js",
-		"index.js",
-		"index.d.ts",
+		"dist",
 		"LICENSE",
-		"package.json"
+		"package.json",
+		"tsconfig.json",
+		"tsconfig.build.json"
 	],
 	"engines": {
-		"node": ">=22.9.0",
-		"npm": ">=10.8.3"
+		"node": ">=24.13.0",
+		"npm": ">=11.6.2"
 	},
 	"scripts": {
-		"eslint": "eslint .",
-		"test": "node --test --watch",
-		"test-ci": "node --test"
+		"test:watch": "node --test --watch \"test/**/*.test.ts\"",
+		"test:ci": "node --test \"test/**/*.test.ts\"",
+		"lint:oxlint": "oxlint .",
+		"lint:all": "npm run lint:ts && npm run lint:oxlint",
+		"build:ci": "rslib build",
+		"build:watch": "rslib build --watch",
+		"lint:ts": "tsgo -p tsconfig.json --noEmit",
+		"prepare": "npm run build:ci"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/node-3d/3d-qml-raub.git"
+		"url": "https://github.com/node-3d/plugin-qml.git"
 	},
 	"dependencies": {
-		"qml-raub": "^4.0.0"
+		"@node-3d/qml": "^5.0.0"
 	},
 	"devDependencies": {
-		"3d-core-raub": "^5.1.0",
-		"@types/node": "^22.10.5",
-		"@eslint/js": "^9.17.0",
-		"@types/three": "0.172.0",
-		"eslint": "^9.17.0",
+		"@node-3d/addon-tools": "^11.0.0",
+		"@node-3d/core": "^6.0.0",
+		"@rslib/core": "^0.21.3",
+		"@types/node": "^24.1.0",
+		"@types/three": "0.174.0",
+		"@typescript/native-preview": "^7.0.0-dev.20260503.1",
+		"oxlint": "^1.65.0",
 		"pixelmatch": "^6.0.0",
-		"three": "0.172.0",
-		"typescript": "^5.7.2"
+		"three": "0.174.0",
+		"typescript": "^6.0.3"
+	},
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"bugs": {
+		"url": "https://github.com/node-3d/node-3d/issues"
+	},
+	"homepage": "https://github.com/node-3d/node-3d#readme",
+	"publishConfig": {
+		"access": "public"
 	}
 }

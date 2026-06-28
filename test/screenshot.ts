@@ -1,22 +1,36 @@
-'use strict';
+import fs from 'node:fs';
+import type { TWebgl } from '@node-3d/core';
 
-const fs = require('node:fs');
+type ScreenshotDoc = {
+	w: number;
+	h: number;
+	context: Pick<TWebgl, 'RGBA' | 'UNSIGNED_BYTE' | 'readPixels'>;
+};
+type ScreenshotImage = {
+	data: Buffer | null;
+	width: number;
+	height: number;
+	save: (name: string) => void;
+};
+type ScreenshotImageCtor = {
+	fromPixels: (width: number, height: number, bpp: number, data: Buffer) => ScreenshotImage;
+	loadAsync: (name: string) => Promise<ScreenshotImage>;
+};
 
 const pixelThreshold = 0.2; // threshold error in one pixel
 const maxFailedPixels = 100; // total failed pixels
 
-const makePathDiff = (name) => `test/__diff__/${name}.png`;
-const makePathExpected = (name) => `test/__diff__/${name}__expected__.png`;
-const makePathActual = (name) => `test/__diff__/${name}__actual__.png`;
-const makePathExport = (name) => `__screenshots__/${name}.png`;
+const makePathDiff = (name: string): string => `test/__diff__/${name}.png`;
+const makePathExpected = (name: string): string => `test/__diff__/${name}__expected__.png`;
+const makePathActual = (name: string): string => `test/__diff__/${name}__actual__.png`;
+const makePathExport = (name: string): string => `__screenshots__/${name}.png`;
 
-
-const allocBuffer = (doc) => {
+const allocBuffer = (doc: ScreenshotDoc): Buffer => {
 	const memSize = doc.w * doc.h * 4; // estimated number of bytes
 	return Buffer.allocUnsafeSlow(memSize);
 };
 
-const getImage = (doc, Image) => {
+const getImage = (doc: ScreenshotDoc, Image: ScreenshotImageCtor): ScreenshotImage | null => {
 	try {
 		const storage = { data: allocBuffer(doc) };
 		
@@ -36,8 +50,7 @@ const getImage = (doc, Image) => {
 	}
 };
 
-
-const makeScreenshot = (name, doc, Image) => {
+const makeScreenshot = (name: string, doc: ScreenshotDoc, Image: ScreenshotImageCtor): void => {
 	console.info(`Screenshot: ${name}`);
 	const img = getImage(doc, Image);
 	if (img) {
@@ -46,7 +59,11 @@ const makeScreenshot = (name, doc, Image) => {
 	}
 };
 
-const compareScreenshot = async (name, doc, Image) => {
+const compareScreenshot = async (
+	name: string,
+	doc: ScreenshotDoc,
+	Image: ScreenshotImageCtor,
+): Promise<boolean> => {
 	const path = makePathExport(name);
 	if (!fs.existsSync(path)) {
 		console.error(`Warning! No such screenshot: ${name}.`);
@@ -54,11 +71,14 @@ const compareScreenshot = async (name, doc, Image) => {
 	}
 	
 	const actualImage = getImage(doc, Image);
-	if (!actualImage) {
+	if (!actualImage?.data) {
 		return false;
 	}
 	
 	const expectedImage = await Image.loadAsync(path);
+	if (!expectedImage.data) {
+		return false;
+	}
 	
 	const diff = allocBuffer(doc);
 	
@@ -110,11 +130,15 @@ const compareScreenshot = async (name, doc, Image) => {
 	return true;
 };
 
-
-const screenshot = async (name, doc, Image) => {
+export const screenshot = async (
+	name: string,
+	doc: ScreenshotDoc,
+	Image: ScreenshotImageCtor,
+): Promise<boolean> => {
 	try {
 		const path = makePathExport(name);
 		
+		// oxlint-disable-next-line node/no-process-env
 		const isCi = !!process.env['CI'];
 		const hasFile = fs.existsSync(path);
 		
@@ -130,4 +154,5 @@ const screenshot = async (name, doc, Image) => {
 	}
 };
 
-module.exports = { screenshot };
+export default { screenshot 
+};

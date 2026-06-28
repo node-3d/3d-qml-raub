@@ -1,16 +1,11 @@
-'use strict';
-
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import * as three from 'three';
-import { init, addThreeHelpers } from '3d-core-raub';
-import { init as initQml } from '3d-qml-raub';
+import { init, addThreeHelpers, gl, Image, Screen } from '@node-3d/core';
+import { init as initQml } from '@node-3d/plugin-qml';
 
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const cwd = import.meta.dirname;
 
 const {
-	doc, Image: Img, gl, Screen,
+	doc,
 } = init({
 	isGles3: true,
 	isWebGL2: true,
@@ -18,22 +13,26 @@ const {
 	autoFullscreen: true,
 	title: 'QML UI',
 });
-addThreeHelpers(three, gl);
+addThreeHelpers(three);
 
 const screen = new Screen({ three, fov: 90, near: 1, far: 2000, z: 1000 });
 const scene = screen.scene;
 
-const { QmlOverlay, loop } = initQml({ doc, gl, cwd: __dirname, three });
+const { QmlOverlay, loop } = initQml({ doc, gl, cwd, three });
 
-const icon = new Img('qml.png'); // use `npm run gui` from "examples", so CWD is there
-icon.on('load', () => { doc.icon = (icon as unknown as typeof doc.icon); });
+const icon = new Image('qml.png'); // use `npm run gui` from "examples", so CWD is there
+icon.on('load', () => {
+	if (icon.data) {
+		doc.icon = { width: icon.width, height: icon.height, data: icon.data };
+	}
+});
 
 scene.fog = new three.FogExp2(0x000000, 0.0007);
 
-const overlay = new QmlOverlay({ file: `${__dirname}/qml/gui.qml` });
+const overlay = new QmlOverlay({ file: `${cwd}/qml/gui.qml` });
 scene.add(overlay.mesh);
 
-const geo = new three.BufferGeometry();
+const geo = new three.BufferGeometry<three.NormalOrGLBufferAttributes>();
 geo.computeBoundingSphere = (() => {
 	geo.boundingSphere = new three.Sphere(undefined, Infinity);
 });
@@ -52,7 +51,7 @@ const vbo = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 const posAttr = new three.GLBufferAttribute(vbo, gl.FLOAT, 3, 4, CLOUD_SIZE);
-geo.setAttribute('position', posAttr as unknown as three.BufferAttribute);
+geo.setAttribute('position', posAttr);
 geo.setDrawRange(0, CLOUD_SIZE);
 
 const getTimeHue = (): number => {

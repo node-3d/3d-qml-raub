@@ -1,26 +1,25 @@
-'use strict';
-
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import * as three from 'three';
-import { init, addThreeHelpers } from '3d-core-raub';
-import { init as initQml } from '3d-qml-raub';
+import { init, addThreeHelpers, gl, Image } from '@node-3d/core';
+import { init as initQml } from '@node-3d/plugin-qml';
 
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const cwd = import.meta.dirname;
 
 const {
-	doc, Image: Img, gl,
+	doc,
 } = init({
 	isGles3: true, isWebGL2: true, autoEsc: true, vsync: true,
 });
 
-addThreeHelpers(three, gl);
+addThreeHelpers(three);
 
-const { QmlOverlay, loop } = initQml({ doc, gl, cwd: __dirname, three });
+const { QmlOverlay, loop } = initQml({ doc, gl, cwd, three });
 
-const icon = new Img(__dirname + '/../qml.png');
-icon.on('load', () => { doc.icon = (icon as unknown as typeof doc.icon); });
+const icon = new Image(`${cwd}/../qml.png`);
+icon.on('load', () => {
+	if (icon.data) {
+		doc.icon = { width: icon.width, height: icon.height, data: icon.data };
+	}
+});
 doc.title = 'Calqlatr';
 
 
@@ -38,8 +37,8 @@ doc.on('resize', () => {
 	renderer.setSize(doc.w, doc.h);
 });
 
-const overlay = new QmlOverlay({ file: `${__dirname}/calqlatr/Main.qml` });
-// const overlay = new QmlOverlay({ file: `${__dirname}/itemswitcher/qml/main.qml` });
+const overlay = new QmlOverlay({ file: `${cwd}/calqlatr/Main.qml` });
+// const overlay = new QmlOverlay({ file: `${cwd}/itemswitcher/qml/main.qml` });
 scene.add(overlay.mesh);
 
 const update = () => {
