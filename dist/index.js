@@ -6928,7 +6928,7 @@ if ("u" > typeof __THREE_DEVTOOLS__) __THREE_DEVTOOLS__.dispatchEvent(new Custom
 }));
 if ("u" > typeof window) if (window.__THREE__) console.warn('WARNING: Multiple instances of Three.js being imported.');
 else window.__THREE__ = REVISION;
-const qml_material_logger = getLogger('3d-qml');
+const qml_material_logger = getLogger('plugin-qml');
 let activeThree = null;
 let activeTextureFromId = null;
 const makeMaterialParams = (three, opts)=>({
@@ -7006,7 +7006,7 @@ const qml_material_init = (opts)=>{
     return inited;
 };
 const qml_material = qml_material_init;
-const qml_overlay_material_logger = getLogger('3d-qml');
+const qml_overlay_material_logger = getLogger('plugin-qml');
 let qml_overlay_material_activeThree = null;
 class QmlOverlayMaterialBase extends QmlMaterialBase {
     constructor(opts = {}){
@@ -7045,7 +7045,7 @@ const qml_overlay_material_init = (opts)=>{
     return qml_overlay_material_inited;
 };
 const qml_overlay_material = qml_overlay_material_init;
-const qml_overlay_logger = getLogger('3d-qml');
+const qml_overlay_logger = getLogger('plugin-qml');
 const overlayEventNames = [
     'mousedown',
     'mouseup',

@@ -3,7 +3,7 @@ import { ShaderMaterial } from 'three';
 import type * as THREE from 'three';
 import type { TInitMaterialOpts, TMaterialOpts, TNewableQmlMaterial, TTextureFromId, TThree } from './types.ts';
 
-const logger = getLogger('3d-qml');
+const logger = getLogger('plugin-qml');
 
 let activeThree: TThree | null = null;
 let activeTextureFromId: TTextureFromId | null = null;

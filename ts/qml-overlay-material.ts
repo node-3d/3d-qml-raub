@@ -2,7 +2,7 @@ import { getLogger } from '@node-3d/addon-tools';
 import type { TInitMaterialOpts, TMaterialOpts, TNewableQmlOverlayMaterial, TThree } from './types.ts';
 import initQmlMaterial, { QmlMaterialBase } from './qml-material.ts';
 
-const logger = getLogger('3d-qml');
+const logger = getLogger('plugin-qml');
 
 let activeThree: TThree | null = null;
 

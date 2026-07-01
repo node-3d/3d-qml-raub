@@ -11,7 +11,7 @@ import type {
 } from './types.ts';
 import initQmlOverlayMaterial from './qml-overlay-material.ts';
 
-const logger = getLogger('3d-qml');
+const logger = getLogger('plugin-qml');
 const overlayEventNames = ['mousedown', 'mouseup', 'mousemove', 'keydown', 'keyup', 'wheel'] as const;
 
 const overlayEventRoutes: {
